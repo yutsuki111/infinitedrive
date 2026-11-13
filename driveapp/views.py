@@ -30,13 +30,26 @@ DUMMY_MISSIONS = [
 ]
 DUMMY_SHARE_TEXT = '今日は道の駅 ○○ に行ってきました！ 星4つ！'
 
+from django.views.generic.base import TemplateView, ListView, DetailView, FormView
+from django.urls import reverse_lazy
+from .forms import LoginForm
 
-# ---- SCR-01 ログイン ----
-def login_view(request):
-    if request.method == 'POST':
-        # TODO(バックエンド)：user_id / password で認証する
-        return redirect('driveapp:home')
-    return render(request, 'driveapp/login.html')
+class LoginView(FormView):
+    template_name = 'driveapp/login.html'
+    form_class = LoginForm
+    success_url = reverse_lazy('driveapp:home')
+
+    # POSTの値を受け取る
+    # def form_valid(self, form):
+
+
+
+# # ---- SCR-01 ログイン ----
+# def login_view(request):
+#     if request.method == 'POST':
+#         # TODO(バックエンド)：user_id / password で認証する
+#         return redirect('driveapp:home')
+#     return render(request, 'driveapp/login.html')
 
 
 # ---- SCR-02 アカウント登録 ----
