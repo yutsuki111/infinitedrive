@@ -5,6 +5,51 @@
   <title>SCR-07 部屋参加画面</title>
 </head>
 <body>
-  <h1>SCR-07 部屋参加画面（作成中）</h1>
+
+    <header>
+        <a href="index.html">←</a>
+        <h1>部屋参加</h1>
+    </header>
+        
+    <main>
+        <form>
+            <!-- 部屋番号 -->
+            <label for="room_code">部屋番号</label>
+            <input
+                type="text"
+                id="room_code"
+                name="room_code"
+                placeholder="四桁の部屋番号"
+                required
+            >
+
+            <!-- 合言葉 -->
+            <label for="password">合言葉</label>
+            <input
+                type="text"
+                id="password"
+                name="password"
+                placeholder="半角英数字で入力"
+                required
+            >
+
+            <!-- 参加ニックネーム -->
+            <label for="nickname">参加ニックネーム</label>
+            <input
+                type="text"
+                id="nickname"
+                name="nickname"
+                placeholder="例：たろう"
+                required
+            >
+
+            <!-- 作成ボタン -->
+            <button type="submit">作成</button>
+
+
+        </form>
+    </main>
+
 </body>
 </html>
+
