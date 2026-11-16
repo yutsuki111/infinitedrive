@@ -30,7 +30,7 @@ DUMMY_MISSIONS = [
 ]
 DUMMY_SHARE_TEXT = '今日は道の駅 ○○ に行ってきました！ 星4つ！'
 
-from django.views.generic.base import TemplateView, ListView, DetailView, FormView
+from django.views.generic import TemplateView, ListView, DetailView, FormView
 from django.urls import reverse_lazy
 from .forms import LoginForm
 
@@ -41,6 +41,7 @@ class LoginView(FormView):
 
     # POSTの値を受け取る
     # def form_valid(self, form):
+
 
 
 
