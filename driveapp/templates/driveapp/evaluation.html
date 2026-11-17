@@ -1,10 +1,54 @@
-﻿<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>SCR-10 目的地評価画面</title>
-</head>
-<body>
-  <h1>SCR-10 目的地評価画面（作成中）</h1>
-</body>
-</html>
+﻿{% extends "driveapp/base.html" %}
+
+{% block title %}目的地評価{% endblock %}
+
+{% block page_title %}
+目的地評価
+{% endblock %}
+
+{% block content %}
+
+<!-- 評価対象目的地名 -->
+<p>{{ destination_name }}</p>
+
+<!-- 満足度ラベル -->
+<p>満足度</p>
+
+<!-- 星評価選択欄 -->
+<form method="post">
+    {% csrf_token %}
+
+    <div>
+        <input type="radio" id="star1" name="star" value="1">
+        <label for="star1">1</label>
+
+        <input type="radio" id="star2" name="star" value="2">
+        <label for="star2">2</label>
+
+        <input type="radio" id="star3" name="star" value="3">
+        <label for="star3">3</label>
+
+        <input type="radio" id="star4" name="star" value="4">
+        <label for="star4">4</label>
+
+        <input type="radio" id="star5" name="star" value="5">
+        <label for="star5">5</label>
+    </div>
+
+    <br>
+
+    <!-- 決定ボタン -->
+    <button type="submit" name="btn-submit">
+        決定
+    </button>
+
+</form>
+
+<!-- エラーメッセージ -->
+{% if error_message %}
+<p>
+    {{ error_message }}
+</p>
+{% endif %}
+
+{% endblock %}

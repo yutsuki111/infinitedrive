@@ -1,0 +1,28 @@
+{% load static %}<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}無限ドライブ{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'driveapp/css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="app">
+
+    {% block header %}
+    {# 戻るボタン付きのヘッダー。back_url と page_title を各画面で上書きする #}
+    <header class="page-header">
+      <a href="{% block back_url %}{% url 'driveapp:home' %}{% endblock %}" class="back-link" aria-label="戻る">←</a>
+      <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
+    </header>
+    {% endblock %}
+
+    <main class="page-body">
+      {% block content %}{% endblock %}
+    </main>
+
+  </div>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

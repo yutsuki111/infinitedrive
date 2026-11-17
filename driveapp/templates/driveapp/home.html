@@ -13,3 +13,67 @@
   </form>
 </body>
 </html>
+﻿{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-03 ホーム画面
+  views から受け取る値：
+    member_name … ログイン中の会員の表示名。渡されないときは「ゲスト」表示になる
+    error       … エラーメッセージ（なくてもOK）
+{% endcomment %}
+
+{% block title %}無限ドライブ{% endblock %}
+
+{# ホームは戻るボタン付きヘッダーを出さない #}
+{% block header %}{% endblock %}
+
+{% block content %}
+  {% include 'driveapp/includes/logo.html' %}
+
+  <div class="card">
+    <div class="avatar" aria-hidden="true">♟</div>
+    <div>
+      <p class="card-label">ユーザーステータス</p>
+      <p class="card-value">{{ member_name|default:'ゲスト' }}</p>
+    </div>
+  </div>
+
+  <a href="{% url 'driveapp:room_create' %}" class="btn btn-primary">＋ 部屋作成（1人／みんな）</a>
+  <a href="{% url 'driveapp:room_join' %}" class="btn btn-secondary">♧ 部屋参加</a>
+
+  {% if member_name %}
+    {# 会員ログイン時 #}
+    <a href="{% url 'driveapp:profile' %}" class="btn btn-secondary">プロフィール</a>
+    <button type="button" class="btn btn-danger" id="btn-logout">ログアウト</button>
+
+    <dialog id="logout-dialog">
+      <p class="dialog-text">ログアウトしますか？</p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" id="logout-cancel">キャンセル</button>
+        {# TODO(バックエンド)：ログアウト用のURLができたら action を差し替える #}
+        <form method="post" action="#" style="flex:1">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">ログアウト</button>
+        </form>
+      </div>
+    </dialog>
+  {% else %}
+    {# ゲスト時 #}
+    <a href="{% url 'driveapp:register' %}" class="btn btn-secondary">新規登録</a>
+    <a href="{% url 'driveapp:login' %}" class="btn btn-secondary">ログイン</a>
+  {% endif %}
+
+  {% if error %}
+    <p class="error-message">{{ error }}</p>
+  {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // ログアウト確認ダイアログの開け閉め
+  const dialog = document.getElementById('logout-dialog');
+  if (dialog) {
+    document.getElementById('btn-logout').addEventListener('click', () => dialog.showModal());
+    document.getElementById('logout-cancel').addEventListener('click', () => dialog.close());
+  }
+</script>
+{% endblock %}
