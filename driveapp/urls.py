@@ -5,9 +5,6 @@ app_name = 'driveapp'
 
 urlpatterns = [
     # --- フロント①担当（SCR-01〜05：認証・ホーム・履歴） ---
-    # path('login/', views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
-    # path('login/', views.login_view, name='login'),
-    path('register/', views.register_view, name='register'),
     path('', views.home_view, name='home'),
     path('profile/', views.profile_view, name='profile'),
     path('history/detail/', views.history_detail_view, name='history_detail'),

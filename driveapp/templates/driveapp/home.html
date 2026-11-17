@@ -6,5 +6,11 @@
 </head>
 <body>
   <h1>SCR-03 ホーム画面（作成中）</h1>
+
+  <form action="{% url 'accounts:logout' %}" method='post' name='logout'>
+      {% csrf_token %}
+      <button type="submit">ログアウト</button>
+  </form>
+  
 </body>
 </html>

@@ -6,10 +6,11 @@
     <title>ログイン</title>
 </head>
 <body>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form }}
-    <input type="submit" value="login">
-</form>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form }}
+  <input type="submit" value="login">
+  </form>
+  <p><a href="{% url 'accounts:register' %}">新規登録へ→</a></p>
 </body>
 </html>
