@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン</title>
+</head>
+<body>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form }}
+  <input type="submit" value="login">
+  </form>
+  <p><a href="{% url 'accounts:register' %}">新規登録へ→</a></p>
+</body>
+</html>
