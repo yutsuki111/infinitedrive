@@ -30,23 +30,6 @@ DUMMY_MISSIONS = [
 ]
 DUMMY_SHARE_TEXT = '今日は道の駅 ○○ に行ってきました！ 星4つ！'
 
-
-# ---- SCR-01 ログイン ----
-def login_view(request):
-    if request.method == 'POST':
-        # TODO(バックエンド)：user_id / password で認証する
-        return redirect('driveapp:home')
-    return render(request, 'driveapp/login.html')
-
-
-# ---- SCR-02 アカウント登録 ----
-def register_view(request):
-    if request.method == 'POST':
-        # TODO(バックエンド)：アカウントを保存する
-        return redirect('driveapp:home')
-    return render(request, 'driveapp/register.html')
-
-
 # ---- SCR-03 ホーム ----
 def home_view(request):
     return render(request, 'driveapp/home.html', {'user': DUMMY_USER})
