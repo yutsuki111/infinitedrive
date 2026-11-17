@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログアウト</title>
-</head>
-<body>
-    <p>ログアウト完了</p>
-    <p><a href="{% url 'accounts:login' %}">ログイン画面へ</a></p>
-</form>
-</body>
-</html>
+{% extends 'driveapp/base.html' %}
+{# ログアウト完了（LogoutView） #}
+
+{% block title %}ログアウト｜無限ドライブ{% endblock %}
+{% block header %}{% endblock %}
+
+{% block content %}
+  {% include 'driveapp/includes/logo.html' %}
+  <p class="success-message center">ログアウトしました</p>
+  <a href="{% url 'driveapp:home' %}" class="btn btn-primary">ホームへ</a>
+  <a href="{% url 'accounts:login' %}" class="btn btn-secondary">もう一度ログイン</a>
+{% endblock %}

@@ -1,26 +1,72 @@
-﻿<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>SCR-04 プロフィール画面</title>
-</head>
-<body>
-  <h1>SCR-04 プロフィール画面（作成中）</h1>
-    <div style="padding: 20px; margin-bottom: 5px; border: 1px solid #333333; border-radius: 10px; width:100px">
-      <center>
-        <font size="2px">
-          ドライブ回数
-        </font>
-      </center>
+﻿{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-04 プロフィール画面
+  views から受け取る値：
+    user        … 仮データの user.nickname（ログイン中は request.user の表示名・ユーザーIDを使う）
+    titles      … 獲得称号のリスト（文字列）
+    histories   … ドライブ履歴のリスト（id, date, destination）
+    drive_count … ドライブ回数（なければ histories の件数）
+    title_count … 獲得称号数（なければ titles の件数）
+    error       … 取得失敗時のメッセージ（あると再読み込みボタンも出る）
+{% endcomment %}
+
+{% block title %}プロフィール｜無限ドライブ{% endblock %}
+{% block back_url %}{% url 'driveapp:home' %}{% endblock %}
+{% block page_title %}プロフィール{% endblock %}
+
+{% block content %}
+  <div class="profile-head">
+    <div class="avatar avatar-lg" aria-hidden="true">♟</div>
+    {% if request.user.is_authenticated %}
+      {# ログイン中は本物のユーザー情報を表示 #}
+      <p class="profile-name">{{ request.user.display_name|default:request.user.username }}</p>
+      <p class="muted">ユーザーID：{{ request.user.username }}</p>
+    {% else %}
+      {# 未ログイン時は views の仮データ（user.nickname）を表示 #}
+      <p class="profile-name">{{ user.nickname }}</p>
+    {% endif %}
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <p class="stat-label">ドライブ回数</p>
+      <p class="stat-value">{% firstof drive_count histories|length '0' %}回</p>
     </div>
-    <div style="padding: 20px; margin-bottom: 5px; border: 1px solid #333333; border-radius: 10px; width:100px">
-      <center>
-        <font size="2px">
-          獲得称号数
-        </font>
-      </center>
+    <div class="stat">
+      <p class="stat-label">獲得称号数</p>
+      <p class="stat-value">{% firstof title_count titles|length '0' %}個</p>
     </div>
-  <p>獲得称号一覧</p>
-  <p>ドライブ履歴一覧</p>
-</body>
-</html>
+  </div>
+
+  <h2 class="section-title">獲得称号一覧</h2>
+  {% if titles %}
+    <ul class="list-box">
+      {% for title in titles %}
+        <li>🏆 {{ title }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">獲得した称号はありません</p>
+  {% endif %}
+
+  <h2 class="section-title">ドライブ履歴一覧</h2>
+  {% if histories %}
+    <ul class="list-box">
+      {% for h in histories %}
+        <li>
+          {# TODO(バックエンド)：urls.py を history/<int:id>/ にしたら {% url 'driveapp:history_detail' h.id %} に変える #}
+          <a class="list-link" href="{% url 'driveapp:history_detail' %}?id={{ h.id }}">
+            🚗 {{ h.destination }}（{{ h.date }}）
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">ドライブ履歴はありません</p>
+  {% endif %}
+
+  {% if error %}
+    <p class="error-message">{{ error }}</p>
+    <a href="{% url 'driveapp:profile' %}" class="btn btn-secondary">再読み込み</a>
+  {% endif %}
+{% endblock %}

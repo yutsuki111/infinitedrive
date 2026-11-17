@@ -253,3 +253,489 @@ dialog::backdrop {
 .dialog-actions .btn {
   margin-bottom: 0;
 }
+
+/* ============================================================
+   ここから SCR-04〜14 用
+   ============================================================ */
+
+/* ---------- 見出し・文字 ---------- */
+.section-title {
+  margin: 26px 0 12px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.muted {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--text-sub);
+}
+
+.center {
+  text-align: center;
+}
+
+/* ---------- 枠で囲んだリスト（称号一覧・履歴一覧など） ---------- */
+.list-box {
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.list-box li {
+  padding: 14px 16px;
+  font-size: 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+.list-box li:last-child {
+  border-bottom: none;
+}
+
+/* 押せる行（履歴一覧） */
+.list-box a.list-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: -14px -16px;
+  padding: 14px 16px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.list-box a.list-link::after {
+  content: "›";
+  color: var(--text-sub);
+  font-size: 20px;
+}
+
+.list-box a.list-link:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ---------- 情報ボックス ---------- */
+.box {
+  padding: 16px;
+  margin-bottom: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.box p {
+  margin: 4px 0;
+}
+
+.note {
+  padding: 12px 14px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--text-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.success-message {
+  padding: 12px 14px;
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #c8ffe4;
+  background: #0f2a22;
+  border: 1px solid #3ddc97;
+  border-radius: var(--radius);
+}
+
+/* ---------- プロフィール ---------- */
+.profile-head {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.avatar-lg {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 10px;
+  font-size: 32px;
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat {
+  padding: 14px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.stat-label {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+.stat-value {
+  margin: 4px 0 0;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+/* ---------- 写真 ---------- */
+.photo {
+  width: 100%;
+  border-radius: var(--radius);
+  display: block;
+  object-fit: cover;
+}
+
+.photo-main {
+  height: 160px;
+  margin-bottom: 18px;
+}
+
+/* 写真がないときの代わりのグラデーション */
+.photo-placeholder {
+  height: 160px;
+  margin-bottom: 18px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #2c5a6e 0%, #26443a 50%, #c96a4a 100%);
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.photo-grid .photo {
+  height: 120px;
+}
+
+/* ---------- 選択欄・テキストエリア ---------- */
+select.input {
+  appearance: none;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239fb0c5' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 16px center;
+  padding-right: 40px;
+}
+
+select.input option {
+  color: #000;
+}
+
+textarea.input {
+  min-height: 96px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+input[type="file"].input {
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* ---------- ラジオ・チェックの選択肢（役割選択など） ---------- */
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.choice input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-from);
+}
+
+.choice:has(input:checked) {
+  border-color: var(--input-border);
+}
+
+.choice:has(input:disabled) {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.check-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+.check-line input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-from);
+}
+
+/* ---------- 星評価 ---------- */
+.stars {
+  display: flex;
+  flex-direction: row-reverse;   /* 右から並べて「選んだ星より左」を光らせる */
+  justify-content: space-between;
+  margin: 8px 4px 24px;
+}
+
+.stars input {
+  display: none;
+}
+
+.stars label {
+  font-size: 40px;
+  color: #3a4a60;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.stars input:checked ~ label,
+.stars label:hover,
+.stars label:hover ~ label {
+  color: #ffc23d;
+}
+
+/* ---------- ボタンを横に並べる ---------- */
+.btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-row .btn {
+  flex: 1;
+}
+
+.btn-sm {
+  padding: 10px 12px;
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+/* ---------- 部屋画面 ---------- */
+.room-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.room-name {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.badge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.badge-driving {
+  border-color: var(--primary-to);
+  color: var(--primary-to);
+}
+
+.panel {
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(19, 35, 58, 0.6);
+}
+
+.panel .section-title {
+  margin-top: 0;
+}
+
+.members {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.member {
+  text-align: center;
+  font-size: 13px;
+}
+
+.member-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 4px;
+  font-weight: 700;
+  border: 2px solid var(--input-border);
+  border-radius: 50%;
+  background: #1b3550;
+}
+
+.timeline {
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post {
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.post-mission {
+  border-color: var(--primary-to);
+}
+
+.post-system {
+  background: transparent;
+  border-style: dashed;
+  color: var(--text-sub);
+  font-size: 13px;
+}
+
+.post-meta {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.post-body {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.post img {
+  width: 100%;
+  margin-top: 8px;
+  border-radius: 8px;
+}
+
+/* ---------- 割り勘電卓 ---------- */
+.calc-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.calc-row label {
+  font-size: 14px;
+  color: var(--text-sub);
+}
+
+.result-big {
+  margin: 8px 0 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffb547;
+}
+
+/* ---------- マスタ管理（管理者は紫） ---------- */
+.admin-header {
+  margin: -24px -24px 20px;
+  padding: 24px;
+  text-align: center;
+  background: linear-gradient(90deg, #5b2bc4, #8a3ce0);
+  border-radius: 0 0 18px 18px;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.btn-admin {
+  border: none;
+  background: linear-gradient(90deg, #6a32d8, #9b45ee);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-sub);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.tab.is-active {
+  color: var(--text);
+  border: none;
+  background: linear-gradient(90deg, #6a32d8, #9b45ee);
+}
+
+.master-item {
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.master-item h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+
+.master-item .muted {
+  margin-bottom: 12px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* 入力欄ごとのエラー文（アカウント登録など） */
+.field-error {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--danger);
+}

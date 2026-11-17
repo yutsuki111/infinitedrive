@@ -1,15 +1,59 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アカウント作成</title>
-</head>
-<body>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form }}
-    <input type="submit" value="register">
-</form>
-</body>
-</html>
+{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-02 アカウント登録画面
+  accounts/views.py の RegisterView（CreateUserForm）から使われるテンプレート。
+  CreateUserForm の項目：username / display_name / email / password1 / password2
+  入力欄の name はこの5つに合わせている。エラーは項目ごとに表示する。
+{% endcomment %}
+
+{% block title %}アカウント登録｜無限ドライブ{% endblock %}
+{% block back_url %}{% url 'driveapp:home' %}{% endblock %}
+{% block page_title %}アカウント登録{% endblock %}
+
+{% block content %}
+  <form method="post" action="{% url 'accounts:register' %}" novalidate>
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="id_username">ユーザーID</label>
+      <input type="text" id="id_username" name="username" class="input{% if form.username.errors %} is-error{% endif %}"
+             placeholder="ユーザーID" maxlength="150" value="{{ form.username.value|default:'' }}" required>
+      {% for e in form.username.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="form-group">
+      <label for="id_display_name">表示名</label>
+      <input type="text" id="id_display_name" name="display_name" class="input{% if form.display_name.errors %} is-error{% endif %}"
+             placeholder="例：たろう" maxlength="20" value="{{ form.display_name.value|default:'' }}" required>
+      {% for e in form.display_name.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="form-group">
+      <label for="id_email">メールアドレス（任意）</label>
+      <input type="email" id="id_email" name="email" class="input{% if form.email.errors %} is-error{% endif %}"
+             placeholder="example@mail.com" value="{{ form.email.value|default:'' }}">
+      {% for e in form.email.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="form-group">
+      <label for="id_password1">パスワード</label>
+      <input type="password" id="id_password1" name="password1" class="input{% if form.password1.errors %} is-error{% endif %}"
+             placeholder="8文字以上" autocomplete="new-password" required>
+      <p class="help-text">8文字以上で入力してください</p>
+      {% for e in form.password1.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="form-group">
+      <label for="id_password2">パスワード確認</label>
+      <input type="password" id="id_password2" name="password2" class="input{% if form.password2.errors %} is-error{% endif %}"
+             placeholder="もう一度入力" autocomplete="new-password" required>
+      {% for e in form.password2.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    </div>
+
+    <button type="submit" name="btn-register" class="btn btn-primary">登録</button>
+  </form>
+
+  {% if form.non_field_errors %}
+    {% for e in form.non_field_errors %}<p class="error-message">{{ e }}</p>{% endfor %}
+  {% endif %}
+{% endblock %}

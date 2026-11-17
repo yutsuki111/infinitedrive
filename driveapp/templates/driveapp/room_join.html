@@ -1,10 +1,46 @@
-﻿<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>SCR-07 部屋参加画面</title>
-</head>
-<body>
-  <h1>SCR-07 部屋参加画面（作成中）</h1>
-</body>
-</html>
+﻿{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-07 部屋参加画面
+  送信する値：room_code / passcode / nickname
+  views から受け取る値（なくてもOK）：
+    error     … エラーメッセージ（例：「部屋番号または合言葉が正しくありません。」）
+    room_code … エラー時に戻す部屋番号
+    nickname  … 初期値（会員は表示名）／エラー時に戻すニックネーム
+{% endcomment %}
+
+{% block title %}部屋参加｜無限ドライブ{% endblock %}
+{% block back_url %}{% url 'driveapp:home' %}{% endblock %}
+{% block page_title %}部屋参加{% endblock %}
+
+{% block content %}
+  {% include 'driveapp/includes/logo.html' %}
+
+  <form method="post" action="{% url 'driveapp:room_join' %}" novalidate>
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="room_code">部屋番号</label>
+      <input type="text" id="room_code" name="room_code" class="input{% if error %} is-error{% endif %}"
+             placeholder="4桁の部屋番号" maxlength="4" inputmode="numeric" pattern="[0-9]{4}"
+             value="{{ room_code|default:'' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="passcode">合言葉</label>
+      <input type="text" id="passcode" name="passcode" class="input{% if error %} is-error{% endif %}"
+             placeholder="合言葉を入力" maxlength="20" pattern="[A-Za-z0-9]+" required>
+    </div>
+
+    <div class="form-group">
+      <label for="nickname">参加ニックネーム</label>
+      <input type="text" id="nickname" name="nickname" class="input{% if error %} is-error{% endif %}"
+             placeholder="例：はなこ" maxlength="20" value="{{ nickname|default:'' }}" required>
+    </div>
+
+    <button type="submit" name="btn-join" class="btn btn-primary">参加</button>
+  </form>
+
+  {% if error %}
+    <p class="error-message">{{ error }}</p>
+  {% endif %}
+{% endblock %}

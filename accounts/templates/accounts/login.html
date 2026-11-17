@@ -1,16 +1,43 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログイン</title>
-</head>
-<body>
-  <form method="POST">
+{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-01 ログイン画面
+  Django 標準の LoginView（accounts/urls.py）から使われるテンプレート。
+  LoginView のフォームは name="username" と name="password" を受け取るので、
+  入力欄の name はこの2つにしている（画面上の表示は「ユーザーID」）。
+{% endcomment %}
+
+{% block title %}ログイン｜無限ドライブ{% endblock %}
+{% block back_url %}{% url 'driveapp:home' %}{% endblock %}
+{% block page_title %}ログイン{% endblock %}
+
+{% block content %}
+  {% include 'driveapp/includes/logo.html' %}
+
+  <form method="post" action="{% url 'accounts:login' %}" novalidate>
     {% csrf_token %}
-    {{ form }}
-  <input type="submit" value="login">
+    {# ログイン後にもとのページへ戻るための値（@login_required から来たとき） #}
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <div class="form-group">
+      <label for="id_username">ユーザーID</label>
+      <input type="text" id="id_username" name="username" class="input{% if form.errors %} is-error{% endif %}"
+             placeholder="ユーザーID" maxlength="150" value="{{ form.username.value|default:'' }}"
+             autocomplete="username" required>
+    </div>
+
+    <div class="form-group">
+      <label for="id_password">パスワード</label>
+      {# パスワードはエラー時も空欄に戻す（画面設計書どおり） #}
+      <input type="password" id="id_password" name="password" class="input{% if form.errors %} is-error{% endif %}"
+             placeholder="パスワード" autocomplete="current-password" required>
+    </div>
+
+    <button type="submit" name="btn-login" class="btn btn-primary">ログイン</button>
   </form>
-  <p><a href="{% url 'accounts:register' %}">新規登録へ→</a></p>
-</body>
-</html>
+
+  <a href="{% url 'accounts:register' %}" class="text-link">新規登録へ →</a>
+
+  {% if form.errors %}
+    <p class="error-message">ユーザーIDまたはパスワードが正しくありません。</p>
+  {% endif %}
+{% endblock %}

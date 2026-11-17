@@ -1,10 +1,102 @@
-﻿<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>SCR-12 割り勘電卓画面</title>
-</head>
-<body>
-  <h1>SCR-12 割り勘電卓画面（作成中）</h1>
-</body>
-</html>
+﻿{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-12 割り勘電卓画面
+  計算はブラウザ（JavaScript）でその場で行います。
+  views から受け取る値（なくてもOK）：
+    distance … 出発地〜目的地の距離（km）。なければ空欄で手入力
+    people   … 部屋の参加人数。なければ 1
+{% endcomment %}
+
+{% block title %}割り勘電卓｜無限ドライブ{% endblock %}
+{% block back_url %}{% url 'driveapp:result' %}{% endblock %}
+{% block page_title %}割り勘電卓{% endblock %}
+
+{% block content %}
+  <form id="calc-form" novalidate>
+    <div class="calc-row">
+      <label for="distance">走行距離（km）</label>
+      <input type="number" id="distance" name="distance" class="input" step="0.1" min="0" value="{{ distance|default:'' }}">
+    </div>
+    <div class="calc-row">
+      <label for="people">参加人数（人）</label>
+      <input type="number" id="people" name="people" class="input" step="1" min="1" value="{{ people|default:1 }}">
+    </div>
+    <div class="calc-row">
+      <label for="fuel_efficiency">燃費（km/L）</label>
+      <input type="number" id="fuel_efficiency" name="fuel_efficiency" class="input" step="0.1" min="0" value="15.0">
+    </div>
+    <div class="calc-row">
+      <label for="gas_price">ガソリン単価（円/L）</label>
+      <input type="number" id="gas_price" name="gas_price" class="input" step="1" min="0" value="170">
+    </div>
+    <div class="calc-row">
+      <label for="toll_fee">高速道路料金（円）</label>
+      <input type="number" id="toll_fee" name="toll_fee" class="input" step="1" min="0" value="0">
+    </div>
+    <div class="calc-row">
+      <label for="parking_fee">駐車料金（円）</label>
+      <input type="number" id="parking_fee" name="parking_fee" class="input" step="1" min="0" value="0">
+    </div>
+
+    <button type="submit" name="btn-calc" class="btn btn-primary">計算する</button>
+  </form>
+
+  <p class="error-message" id="calc-error" hidden></p>
+
+  <section id="calc-result" hidden>
+    <h2 class="section-title">計算結果</h2>
+    <div class="box">
+      <p>ガソリン代：<span id="r-gas"></span>円</p>
+      <p>合計金額：<span id="r-total"></span>円</p>
+      <p class="result-big" id="r-each"></p>
+    </div>
+  </section>
+
+  <p class="note">ガソリン代は直線距離等に基づく概算です。実際の費用とは異なる場合があります。</p>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('calc-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const num = (id) => parseFloat(document.getElementById(id).value);
+    const distance = num('distance');
+    const people = num('people');
+    const efficiency = num('fuel_efficiency');
+    const price = num('gas_price');
+    const toll = num('toll_fee') || 0;
+    const parking = num('parking_fee') || 0;
+
+    const errorBox = document.getElementById('calc-error');
+    const resultBox = document.getElementById('calc-result');
+
+    // 入力チェック（画面設計書のバリデーションどおり）
+    let error = '';
+    if (!(distance > 0)) error = '走行距離を正しく入力してください。';
+    else if (!(people >= 1) || !Number.isInteger(people)) error = '参加人数は1以上の整数で入力してください。';
+    else if (!(efficiency > 0)) error = '燃費を正しく入力してください。';
+    else if (!(price > 0)) error = 'ガソリン単価を正しく入力してください。';
+    else if (toll < 0 || parking < 0) error = '料金は0以上で入力してください。';
+
+    if (error) {
+      errorBox.textContent = error;
+      errorBox.hidden = false;
+      resultBox.hidden = true;
+      return;
+    }
+
+    const gas = Math.round(distance / efficiency * price);
+    const total = gas + toll + parking;
+    const each = Math.ceil(total / people);   // 1円未満は切り上げ
+
+    document.getElementById('r-gas').textContent = gas.toLocaleString();
+    document.getElementById('r-total').textContent = total.toLocaleString();
+    document.getElementById('r-each').textContent = people === 1
+      ? `合計：${total.toLocaleString()}円`
+      : `1人あたり：${each.toLocaleString()}円`;
+
+    errorBox.hidden = true;
+    resultBox.hidden = false;
+  });
+</script>
+{% endblock %}
