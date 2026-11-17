@@ -1,54 +1,46 @@
-﻿{% extends "driveapp/base.html" %}
+﻿{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-10 目的地評価画面（戻るボタンなし）
+  送信する値：star（1〜5）
+  views から受け取る値（なくてもOK）：
+    destination … name（目的地名）, image_url（写真）　※ destination_name でもOK
+    error       … エラーメッセージ（例：「満足度を選択してください。」）　※ error_message でもOK
+{% endcomment %}
 
-{% block title %}目的地評価{% endblock %}
+{% block title %}目的地評価｜無限ドライブ{% endblock %}
 
-{% block page_title %}
-目的地評価
+{% block header %}
+  <header class="page-header">
+    <h1 class="page-title">目的地評価</h1>
+  </header>
 {% endblock %}
 
 {% block content %}
+  <div class="box">
+    <p>📍 {% firstof destination.name destination_name '目的地名' %}</p>
+    {% if destination.image_url %}
+      <img src="{{ destination.image_url }}" alt="" class="photo photo-main" style="margin:10px 0 0">
+    {% else %}
+      <div class="photo-placeholder" style="margin:10px 0 0" aria-hidden="true"></div>
+    {% endif %}
+  </div>
 
-<!-- 評価対象目的地名 -->
-<p>{{ destination_name }}</p>
-
-<!-- 満足度ラベル -->
-<p>満足度</p>
-
-<!-- 星評価選択欄 -->
-<form method="post">
+  <form method="post" action="{% url 'driveapp:evaluation' %}">
     {% csrf_token %}
+    <h2 class="section-title">満足度</h2>
 
-    <div>
-        <input type="radio" id="star1" name="star" value="1">
-        <label for="star1">1</label>
-
-        <input type="radio" id="star2" name="star" value="2">
-        <label for="star2">2</label>
-
-        <input type="radio" id="star3" name="star" value="3">
-        <label for="star3">3</label>
-
-        <input type="radio" id="star4" name="star" value="4">
-        <label for="star4">4</label>
-
-        <input type="radio" id="star5" name="star" value="5">
-        <label for="star5">5</label>
+    {# 右から 5→1 の順に並べ、CSSで左右反転して表示している #}
+    <div class="stars">
+      {% for n in '54321' %}
+        <input type="radio" id="star{{ n }}" name="star" value="{{ n }}" required>
+        <label for="star{{ n }}" title="{{ n }}">★</label>
+      {% endfor %}
     </div>
 
-    <br>
+    <button type="submit" name="btn-submit" class="btn btn-primary">決定</button>
+  </form>
 
-    <!-- 決定ボタン -->
-    <button type="submit" name="btn-submit">
-        決定
-    </button>
-
-</form>
-
-<!-- エラーメッセージ -->
-{% if error_message %}
-<p>
-    {{ error_message }}
-</p>
-{% endif %}
-
+  {% if error or error_message %}
+    <p class="error-message">{% firstof error error_message %}</p>
+  {% endif %}
 {% endblock %}

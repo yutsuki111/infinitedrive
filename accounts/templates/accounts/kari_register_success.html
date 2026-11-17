@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登録</title>
-</head>
-<body>
-    <p>アカウント登録完了</p>
-    <p><a href="{% url 'accounts:login' %}"></a>ログイン画面へ</p>
-</form>
-</body>
-</html>
+{% extends 'driveapp/base.html' %}
+{# アカウント登録完了（RegisterSuccessView） #}
+
+{% block title %}登録完了｜無限ドライブ{% endblock %}
+{% block header %}{% endblock %}
+
+{% block content %}
+  {% include 'driveapp/includes/logo.html' %}
+  <p class="success-message center">アカウント登録が完了しました！</p>
+  <a href="{% url 'accounts:login' %}" class="btn btn-primary">ログインへ</a>
+  <a href="{% url 'driveapp:home' %}" class="btn btn-secondary">ホームへ</a>
+{% endblock %}

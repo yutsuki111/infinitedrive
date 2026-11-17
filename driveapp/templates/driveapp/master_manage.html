@@ -1,13 +1,210 @@
-﻿<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>SCR-14 マスタ管理画面</title>
-</head>
-<body>
-  <h1>SCR-14 マスタ管理画面（作成中）</h1>
-  <h3>⚙ マスタ管理 (管理者用)</h3>
-  <p><a href=".html">📍目的地/🎯ミッション管理 切替</a></p>
-  <p><a href=".html">+ 新規データ追加</a></p>
-</body>
-</html>
+﻿{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-14 マスタ管理画面（管理者専用）
+  views から受け取る値：
+    destinations … 目的地のリスト（id, name, latitude, longitude, companion_tag, mood_tag）
+    missions     … ミッションのリスト（id, title, companion_tag, mood_tag）
+                   ※今の仮データは name なので、title がなければ name を表示
+    error        … 入力エラーなどのメッセージ
+    message      … 保存・削除が成功したときのメッセージ
+
+  送信する値（すべて driveapp:master_manage に POST）：
+    保存：action=save, master_type（destination/mission）, master_id（新規は空）,
+          master_name, latitude, longitude, companion_tag, mood_tag
+    削除：action=delete, master_type, master_id
+{% endcomment %}
+
+{% block title %}マスタ管理｜無限ドライブ{% endblock %}
+
+{% block header %}
+  <header class="admin-header">
+    <h1>⚙ マスタ管理（管理者専用）</h1>
+  </header>
+{% endblock %}
+
+{% block content %}
+  <div class="tabs" role="tablist">
+    <button type="button" class="tab is-active" data-tab="destination">📍 目的地管理</button>
+    <button type="button" class="tab" data-tab="mission">🎯 ミッション管理</button>
+  </div>
+
+  {% if message %}<p class="success-message">{{ message }}</p>{% endif %}
+  {% if error %}<p class="error-message">{{ error }}</p>{% endif %}
+
+  <button type="button" class="btn btn-primary" id="btn-add">＋ 新規データ追加</button>
+
+  {# ---------- 追加・編集フォーム（ボタンを押すと表示） ---------- #}
+  <form method="post" action="{% url 'driveapp:master_manage' %}" class="box" id="master-form" hidden novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save">
+    <input type="hidden" name="master_type" id="f-type" value="destination">
+    <input type="hidden" name="master_id" id="f-id">
+
+    <div class="form-group">
+      <label for="f-name" id="f-name-label">スポット名称 *</label>
+      <input type="text" id="f-name" name="master_name" class="input" maxlength="100" required>
+    </div>
+
+    <div class="form-row" id="f-latlng">
+      <div class="form-group">
+        <label for="f-lat">緯度 *</label>
+        <input type="number" id="f-lat" name="latitude" class="input" step="0.000001" min="-90" max="90">
+      </div>
+      <div class="form-group">
+        <label for="f-lng">経度 *</label>
+        <input type="number" id="f-lng" name="longitude" class="input" step="0.000001" min="-180" max="180">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="f-companion">同行者 *</label>
+        <select id="f-companion" name="companion_tag" class="input">
+          <option>1人</option><option selected>友達</option><option>恋人</option><option>家族</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="f-mood">気分 *</label>
+        <select id="f-mood" name="mood_tag" class="input">
+          <option selected>エモい</option><option>夜景・絶景</option><option>のんびり</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="error-message" id="f-error" hidden></p>
+
+    <div class="btn-row">
+      <button type="button" class="btn btn-secondary" id="btn-cancel">キャンセル</button>
+      <button type="submit" name="btn-save" class="btn btn-admin">保存</button>
+    </div>
+  </form>
+
+  {# ---------- 目的地一覧 ---------- #}
+  <section data-panel="destination">
+    {% for d in destinations %}
+      <div class="master-item">
+        <h3>{{ d.name }}</h3>
+        <p class="muted">
+          緯度：{{ d.latitude|default:'－' }} / 経度：{{ d.longitude|default:'－' }}
+          ｜ タグ：{{ d.companion_tag|default:'－' }}・{{ d.mood_tag|default:'－' }}
+        </p>
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary btn-sm js-edit"
+                  data-type="destination" data-id="{{ d.id }}" data-name="{{ d.name }}"
+                  data-lat="{{ d.latitude|default:'' }}" data-lng="{{ d.longitude|default:'' }}"
+                  data-companion="{{ d.companion_tag|default:'' }}" data-mood="{{ d.mood_tag|default:'' }}">編集</button>
+          <button type="button" class="btn btn-danger btn-sm js-delete"
+                  data-type="destination" data-id="{{ d.id }}" data-name="{{ d.name }}">削除</button>
+        </div>
+      </div>
+    {% empty %}
+      <p class="muted">登録された目的地はありません</p>
+    {% endfor %}
+  </section>
+
+  {# ---------- ミッション一覧 ---------- #}
+  <section data-panel="mission" hidden>
+    {% for m in missions %}
+      <div class="master-item">
+        <h3>{{ m.title|default:m.name }}</h3>
+        <p class="muted">タグ：{{ m.companion_tag|default:'－' }}・{{ m.mood_tag|default:'－' }}</p>
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary btn-sm js-edit"
+                  data-type="mission" data-id="{{ m.id }}" data-name="{{ m.title|default:m.name }}"
+                  data-companion="{{ m.companion_tag|default:'' }}" data-mood="{{ m.mood_tag|default:'' }}">編集</button>
+          <button type="button" class="btn btn-danger btn-sm js-delete"
+                  data-type="mission" data-id="{{ m.id }}" data-name="{{ m.title|default:m.name }}">削除</button>
+        </div>
+      </div>
+    {% empty %}
+      <p class="muted">登録されたミッションはありません</p>
+    {% endfor %}
+  </section>
+
+  <p class="center" style="margin-top:24px"><a href="{% url 'driveapp:home' %}" class="text-link">ホームへ戻る</a></p>
+
+  {# ---------- 削除確認 ---------- #}
+  <dialog id="delete-dialog">
+    <p class="dialog-text">削除確認</p>
+    <p class="muted"><span id="del-name"></span> を削除しますか？</p>
+    <p class="note">⚠ 過去のドライブ履歴から参照されているデータは、完全には削除せず非表示になります。</p>
+    <form method="post" action="{% url 'driveapp:master_manage' %}" class="dialog-actions">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="delete">
+      <input type="hidden" name="master_type" id="del-type">
+      <input type="hidden" name="master_id" id="del-id">
+      <button type="button" class="btn btn-secondary" id="del-cancel">キャンセル</button>
+      <button type="submit" class="btn btn-danger">削除実行</button>
+    </form>
+  </dialog>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  let current = 'destination';
+  const form = document.getElementById('master-form');
+  const $ = (id) => document.getElementById(id);
+
+  // タブ切り替え
+  document.querySelectorAll('.tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      current = tab.dataset.tab;
+      document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('is-active', t === tab));
+      document.querySelectorAll('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== current));
+      form.hidden = true;
+    });
+  });
+
+  // フォームを開く（新規なら data は空）
+  const openForm = (type, data = {}) => {
+    const isDest = type === 'destination';
+    $('f-type').value = type;
+    $('f-id').value = data.id || '';
+    $('f-name').value = data.name || '';
+    $('f-lat').value = data.lat || '';
+    $('f-lng').value = data.lng || '';
+    if (data.companion) $('f-companion').value = data.companion;
+    if (data.mood) $('f-mood').value = data.mood;
+    $('f-name-label').textContent = isDest ? 'スポット名称 *' : 'ミッション内容 *';
+    $('f-latlng').hidden = !isDest;     // ミッションには緯度経度がない
+    $('f-error').hidden = true;
+    form.hidden = false;
+    form.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  $('btn-add').addEventListener('click', () => openForm(current));
+  $('btn-cancel').addEventListener('click', () => (form.hidden = true));
+  document.querySelectorAll('.js-edit').forEach((btn) => {
+    btn.addEventListener('click', () => openForm(btn.dataset.type, btn.dataset));
+  });
+
+  // 送信前の入力チェック
+  form.addEventListener('submit', (e) => {
+    let msg = '';
+    const lat = parseFloat($('f-lat').value);
+    const lng = parseFloat($('f-lng').value);
+    if (!$('f-name').value.trim()) msg = '名称・内容を入力してください。';
+    else if ($('f-type').value === 'destination') {
+      if (isNaN(lat) || lat < -90 || lat > 90) msg = '緯度は -90〜90 の数値で入力してください。';
+      else if (isNaN(lng) || lng < -180 || lng > 180) msg = '経度は -180〜180 の数値で入力してください。';
+    }
+    if (msg) {
+      e.preventDefault();
+      $('f-error').textContent = msg;
+      $('f-error').hidden = false;
+    }
+  });
+
+  // 削除確認
+  const delDialog = $('delete-dialog');
+  document.querySelectorAll('.js-delete').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      $('del-type').value = btn.dataset.type;
+      $('del-id').value = btn.dataset.id;
+      $('del-name').textContent = btn.dataset.name;
+      delDialog.showModal();
+    });
+  });
+  $('del-cancel').addEventListener('click', () => delDialog.close());
+</script>
+{% endblock %}

@@ -1,10 +1,43 @@
-﻿<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>SCR-08 役割選択画面</title>
-</head>
-<body>
-  <h1>SCR-08 役割選択画面（作成中）</h1>
-</body>
-</html>
+﻿{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-08 役割選択画面
+  送信する値：role（driver / passenger）／ safety（true）
+  views から受け取る値（なくてもOK）：
+    is_solo … True なら1人参加。運転手に固定して同乗者を選べなくする
+    error   … エラーメッセージ（例：「安全運転への同意が必要です。」）
+{% endcomment %}
+
+{% block title %}役割選択｜無限ドライブ{% endblock %}
+{% block back_url %}{% url 'driveapp:room' %}{% endblock %}
+{% block page_title %}役割選択{% endblock %}
+
+{% block content %}
+  <form method="post" action="{% url 'driveapp:role_select' %}" novalidate>
+    {% csrf_token %}
+
+    <h2 class="section-title" style="margin-top:0">あなたの役割</h2>
+    {% if is_solo %}
+      <p class="muted">1人参加のため、運転手に固定されています。</p>
+    {% endif %}
+
+    <label class="choice">
+      <input type="radio" name="role" value="driver" checked>
+      🚗 運転手
+    </label>
+    <label class="choice">
+      <input type="radio" name="role" value="passenger" {% if is_solo %}disabled{% endif %}>
+      👥 同乗者
+    </label>
+
+    <label class="check-line">
+      <input type="checkbox" name="safety" value="true" required>
+      運転中はスマートフォンを操作しません
+    </label>
+
+    <button type="submit" name="btn-submit" class="btn btn-primary">決定（走行開始）</button>
+  </form>
+
+  {% if error %}
+    <p class="error-message">{{ error }}</p>
+  {% endif %}
+{% endblock %}

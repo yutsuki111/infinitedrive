@@ -1,10 +1,65 @@
-﻿<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>SCR-13 ドライブ結果共有画面</title>
-</head>
-<body>
-  <h1>SCR-13 ドライブ結果共有画面（作成中）</h1>
-</body>
-</html>
+﻿{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-13 ドライブ結果共有画面
+  views から受け取る値：
+    share_text … 自動で作った共有テキスト（編集してから共有できる）
+  共有・コピーはブラウザ（JavaScript）だけで動きます。
+{% endcomment %}
+
+{% block title %}ドライブ結果共有｜無限ドライブ{% endblock %}
+{% block back_url %}{% url 'driveapp:result' %}{% endblock %}
+{% block page_title %}ドライブ結果共有{% endblock %}
+
+{% block content %}
+  <div class="form-group">
+    <label for="share_text">共有テキスト</label>
+    <textarea id="share_text" name="share_text" class="input" rows="7" maxlength="200">{{ share_text }}</textarea>
+  </div>
+
+  {# Web Share API が使えるブラウザ（主にスマホ）でだけ表示 #}
+  <button type="button" id="btn-share" class="btn btn-primary" hidden>共有する（標準メニュー）</button>
+  <button type="button" id="btn-copy" class="btn btn-secondary">コピー</button>
+
+  <p class="success-message" id="share-success" hidden></p>
+  <p class="error-message" id="share-error" hidden></p>
+  <p class="note" id="manual-copy" hidden>テキストを選択してコピーしてください</p>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const textArea = document.getElementById('share_text');
+  const shareBtn = document.getElementById('btn-share');
+  const success = document.getElementById('share-success');
+  const error = document.getElementById('share-error');
+  const manual = document.getElementById('manual-copy');
+
+  const show = (el, msg) => {
+    [success, error, manual].forEach((x) => (x.hidden = true));
+    if (msg) el.textContent = msg;
+    el.hidden = false;
+  };
+
+  if (navigator.share) {
+    shareBtn.hidden = false;
+    shareBtn.addEventListener('click', async () => {
+      try {
+        await navigator.share({ text: textArea.value });
+      } catch (e) {
+        if (e.name !== 'AbortError') show(error, '共有できませんでした。コピーして貼り付けてください。');
+      }
+    });
+  }
+
+  document.getElementById('btn-copy').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(textArea.value);
+      show(success, 'コピーしました！');
+    } catch (e) {
+      // コピー機能が使えない環境：テキストを選択状態にして手動コピーを案内
+      textArea.focus();
+      textArea.select();
+      show(manual);
+    }
+  });
+</script>
+{% endblock %}
