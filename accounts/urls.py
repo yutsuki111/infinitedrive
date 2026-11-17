@@ -9,5 +9,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='accounts/kari_logout.html'), name='logout'),
     path('register/', views.RegisterView.as_view(), name='register'),
     path('register_success/', views.RegisterSuccessView.as_view(), name='register_success'),
+    path('profile/', views.ProfileView.as_view(), name="profile"),
     # path('password_reset/', views.PasswordReset.as_view(), name='password_reset'),
 ]

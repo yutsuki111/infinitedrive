@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import CreateView, TemplateView
-from .forms import CreateUserForm
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import CreateUserForm
+from .models import CustomUser
 
 
 class RegisterView(CreateView):
@@ -19,3 +21,9 @@ class RegisterView(CreateView):
 
 class RegisterSuccessView(TemplateView):
     template_name = "accounts/kari_register_success.html"
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = "accounts/profile.html"
+
+    def get_queryset(self):
+        return CustomUser.objects.get(id=self.request.user.id)
