@@ -1,26 +1,10 @@
+from django.conf import settings
 from django.db import models
-
 
 # ==========================================
 # 01_アカウント (accounts)
 # ==========================================
-class Account(models.Model):
-    account_id = models.AutoField(primary_key=True, verbose_name="アカウントID")
-    user_id = models.CharField(max_length=100, unique=True, verbose_name="ユーザーID")
-    password_hash = models.CharField(max_length=255, verbose_name="パスワードハッシュ")
-    display_name = models.CharField(max_length=20, verbose_name="表示名")
-    is_admin = models.BooleanField(default=False, verbose_name="管理者フラグ")
-    status = models.CharField(max_length=20, default="active", verbose_name="利用状態")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="登録日時")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新日時")
 
-    class Meta:
-        db_table = "accounts"
-        verbose_name = "アカウント"
-        verbose_name_plural = "アカウント"
-
-    def __str__(self):
-        return f"{self.display_name} ({self.user_id})"
 
 
 # ==========================================
@@ -77,7 +61,7 @@ class RoomParticipation(models.Model):
         verbose_name="部屋ID",
     )
     account = models.ForeignKey(
-        Account,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -216,7 +200,7 @@ class DriveHistoryParticipant(models.Model):
         verbose_name="ドライブ履歴ID",
     )
     account = models.ForeignKey(
-        Account,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -305,7 +289,7 @@ class MissionResult(models.Model):
         verbose_name="ドライブミッションID",
     )
     account = models.ForeignKey(
-        Account,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -354,7 +338,7 @@ class Achievement(models.Model):
 # ==========================================
 class AccountAchievement(models.Model):
     account = models.ForeignKey(
-        Account,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         db_column="account_id",
         related_name="account_achievements",
@@ -403,7 +387,7 @@ class TimelinePost(models.Model):
         verbose_name="部屋ID",
     )
     account = models.ForeignKey(
-        Account,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
