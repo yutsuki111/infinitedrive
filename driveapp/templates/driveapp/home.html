@@ -44,10 +44,11 @@
 
     <dialog id="logout-dialog">
       <p class="dialog-text">ログアウトしますか？</p>
+      <p class="dialog-subtext">ログアウトするとゲスト表示へ切り替わります</p>
       <div class="dialog-actions">
         <button type="button" class="btn btn-secondary" id="logout-cancel">キャンセル</button>
         {# Django の LogoutView は POST で送る必要がある #}
-        <form method="post" action="{% url 'accounts:logout' %}" style="flex:1">
+        <form method="post" action="{% url 'accounts:logout' %}"> {#style="flex:1"#}
           {% csrf_token %}
           <button type="submit" class="btn btn-danger">ログアウト</button>
         </form>
