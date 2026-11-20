@@ -1,2 +1,86 @@
 [
+{
+  "model": "driveapp.destination",
+  "pk": 1,
+  "fields": {
+    "name": "aaaaaaa",
+    "address": null,
+    "latitude": "0.000028",
+    "longitude": "0.000027",
+    "companion_tag": "友達",
+    "mood_tag": "のんびり",
+    "status": "active",
+    "created_at": "2026-11-20T01:53:49.430Z",
+    "updated_at": "2026-11-20T01:53:49.430Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 2,
+  "fields": {
+    "name": "えええええええ",
+    "address": null,
+    "latitude": "0.000027",
+    "longitude": "0.000035",
+    "companion_tag": "恋人",
+    "mood_tag": "エモい",
+    "status": "active",
+    "created_at": "2026-11-20T01:55:12.761Z",
+    "updated_at": "2026-11-20T01:55:12.761Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 3,
+  "fields": {
+    "name": "空条承太郎",
+    "address": null,
+    "latitude": "0.000019",
+    "longitude": "0.000021",
+    "companion_tag": "家族",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-20T01:56:32.237Z",
+    "updated_at": "2026-11-20T01:56:32.237Z"
+  }
+},
+{
+  "model": "driveapp.mission",
+  "pk": 1,
+  "fields": {
+    "title": "ああああああああ",
+    "description": null,
+    "companion_tag": "友達",
+    "mood_tag": "のんびり",
+    "status": "active",
+    "created_at": "2026-11-20T01:42:20.828Z",
+    "updated_at": "2026-11-20T01:42:20.828Z"
+  }
+},
+{
+  "model": "driveapp.mission",
+  "pk": 2,
+  "fields": {
+    "title": "いいいいいい",
+    "description": null,
+    "companion_tag": "恋人",
+    "mood_tag": "エモい",
+    "status": "active",
+    "created_at": "2026-11-20T01:54:13.814Z",
+    "updated_at": "2026-11-20T01:54:13.814Z"
+  }
+},
+{
+  "model": "driveapp.mission",
+  "pk": 3,
+  "fields": {
+    "title": "パラワンオオヒラタクワガタ",
+    "description": null,
+    "companion_tag": "家族",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-20T01:55:41.536Z",
+    "updated_at": "2026-11-20T01:55:41.536Z"
+  }
+}
 ]
