@@ -1,6 +1,6 @@
 ﻿{% extends 'driveapp/base.html' %}
 {% comment %}
-  SCR-05 ドライブ履歴詳細画面
+  SCR-05 ドライブ履歴詳細画面（mypage/views.py の history_detail_view）
   views から受け取る値：
     history … destination（目的地名）
               started_at / ended_at（出発・到着日時。なければ date を表示）
@@ -11,7 +11,7 @@
 {% endcomment %}
 
 {% block title %}ドライブ履歴詳細｜無限ドライブ{% endblock %}
-{% block back_url %}{% url 'driveapp:profile' %}{% endblock %}
+{% block back_url %}{% url 'mypage:profile' %}{% endblock %}
 {% block page_title %}ドライブ履歴詳細{% endblock %}
 
 {% block content %}
