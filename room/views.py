@@ -9,4 +9,8 @@ class RoomCreateView(CreateView):
     form_class = CreateRoomForm
 
     def get_success_url(self):
-        return reverse('room:top', kwargs={'room_id':self.object.id})
+        return reverse('room:top', kwargs={'room_id':self.object.room_id})
+
+
+class RoomView(TemplateView):
+    template_name = "room/room.html"
