@@ -20,5 +20,4 @@ urlpatterns = [
     path('drive/result/', views.result_view, name='result'),
     path('drive/calculator/', views.calculator_view, name='calculator'),
     path('drive/share/', views.share_view, name='share'),
-    path('master/', views.master_manage_view, name='master_manage'),
 ]

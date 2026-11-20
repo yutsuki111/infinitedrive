@@ -23,7 +23,7 @@
 
   <h2 class="section-title">📍 {{ history.destination }}</h2>
   <div class="box">
-    <p>出発日時：{{ history.started_at|default:history.date }}</p>
+    <p>出発日時：{% firstof history.started_at history.date %}</p>
     <p>到着日時：{{ history.ended_at|default:'－' }}</p>
   </div>
 
