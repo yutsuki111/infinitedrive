@@ -103,9 +103,3 @@ def share_view(request):
     return render(request, 'driveapp/share.html', {'share_text': DUMMY_SHARE_TEXT})
 
 
-# ---- SCR-14 マスタ管理 ----
-def master_manage_view(request):
-    return render(request, 'driveapp/master_manage.html', {
-        'destinations': DUMMY_DESTINATIONS,
-        'missions': DUMMY_MISSIONS,
-    })

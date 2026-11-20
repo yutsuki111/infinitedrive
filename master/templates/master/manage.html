@@ -2,13 +2,15 @@
 {% comment %}
   SCR-14 マスタ管理画面（管理者専用）
   views から受け取る値：
-    destinations … 目的地のリスト（id, name, latitude, longitude, companion_tag, mood_tag）
-    missions     … ミッションのリスト（id, title, companion_tag, mood_tag）
-                   ※今の仮データは name なので、title がなければ name を表示
+    destinations … 目的地のリスト（pk, name, latitude, longitude, companion_tag, mood_tag）
+    missions     … ミッションのリスト（pk, title, companion_tag, mood_tag）
+    active_tab   … 最初に開くタブ（'destination' / 'mission'）
     error        … 入力エラーなどのメッセージ
     message      … 保存・削除が成功したときのメッセージ
+    form_data    … 入力エラー時に、フォームを開き直すための入力内容
+  処理は master/views.py
 
-  送信する値（すべて driveapp:master_manage に POST）：
+  送信する値（すべて master:manage に POST）：
     保存：action=save, master_type（destination/mission）, master_id（新規は空）,
           master_name, latitude, longitude, companion_tag, mood_tag
     削除：action=delete, master_type, master_id
@@ -34,7 +36,7 @@
   <button type="button" class="btn btn-primary" id="btn-add">＋ 新規データ追加</button>
 
   {# ---------- 追加・編集フォーム（ボタンを押すと表示） ---------- #}
-  <form method="post" action="{% url 'driveapp:master_manage' %}" class="box" id="master-form" hidden novalidate>
+  <form method="post" action="{% url 'master:manage' %}" class="box" id="master-form" hidden novalidate>
     {% csrf_token %}
     <input type="hidden" name="action" value="save">
     <input type="hidden" name="master_type" id="f-type" value="destination">
@@ -90,11 +92,11 @@
         </p>
         <div class="btn-row">
           <button type="button" class="btn btn-secondary btn-sm js-edit"
-                  data-type="destination" data-id="{{ d.id }}" data-name="{{ d.name }}"
+                  data-type="destination" data-id="{{ d.pk }}" data-name="{{ d.name }}"
                   data-lat="{{ d.latitude|default:'' }}" data-lng="{{ d.longitude|default:'' }}"
                   data-companion="{{ d.companion_tag|default:'' }}" data-mood="{{ d.mood_tag|default:'' }}">編集</button>
           <button type="button" class="btn btn-danger btn-sm js-delete"
-                  data-type="destination" data-id="{{ d.id }}" data-name="{{ d.name }}">削除</button>
+                  data-type="destination" data-id="{{ d.pk }}" data-name="{{ d.name }}">削除</button>
         </div>
       </div>
     {% empty %}
@@ -106,14 +108,14 @@
   <section data-panel="mission" hidden>
     {% for m in missions %}
       <div class="master-item">
-        <h3>{{ m.title|default:m.name }}</h3>
+        <h3>{{ m.title }}</h3>
         <p class="muted">タグ：{{ m.companion_tag|default:'－' }}・{{ m.mood_tag|default:'－' }}</p>
         <div class="btn-row">
           <button type="button" class="btn btn-secondary btn-sm js-edit"
-                  data-type="mission" data-id="{{ m.id }}" data-name="{{ m.title|default:m.name }}"
+                  data-type="mission" data-id="{{ m.pk }}" data-name="{{ m.title }}"
                   data-companion="{{ m.companion_tag|default:'' }}" data-mood="{{ m.mood_tag|default:'' }}">編集</button>
           <button type="button" class="btn btn-danger btn-sm js-delete"
-                  data-type="mission" data-id="{{ m.id }}" data-name="{{ m.title|default:m.name }}">削除</button>
+                  data-type="mission" data-id="{{ m.pk }}" data-name="{{ m.title }}">削除</button>
         </div>
       </div>
     {% empty %}
@@ -128,7 +130,7 @@
     <p class="dialog-text">削除確認</p>
     <p class="muted"><span id="del-name"></span> を削除しますか？</p>
     <p class="note">⚠ 過去のドライブ履歴から参照されているデータは、完全には削除せず非表示になります。</p>
-    <form method="post" action="{% url 'driveapp:master_manage' %}" class="dialog-actions">
+    <form method="post" action="{% url 'master:manage' %}" class="dialog-actions">
       {% csrf_token %}
       <input type="hidden" name="action" value="delete">
       <input type="hidden" name="master_type" id="del-type">
@@ -140,8 +142,9 @@
 {% endblock %}
 
 {% block extra_js %}
+{{ form_data|json_script:"form-data" }}
 <script>
-  let current = 'destination';
+  let current = '{{ active_tab|default:"destination" }}';
   const form = document.getElementById('master-form');
   const $ = (id) => document.getElementById(id);
 
@@ -194,6 +197,13 @@
       $('f-error').hidden = false;
     }
   });
+
+  // 最初に開くタブ（保存後は保存したほうのタブを開く）
+  document.querySelector(`.tab[data-tab="${current}"]`)?.click();
+
+  // 入力エラーで戻ってきたときは、入力内容を入れたままフォームを開く
+  const formData = JSON.parse(document.getElementById('form-data').textContent);
+  if (formData) openForm(formData.type, formData);
 
   // 削除確認
   const delDialog = $('delete-dialog');

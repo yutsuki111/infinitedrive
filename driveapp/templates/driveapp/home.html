@@ -38,7 +38,7 @@
     {# 会員ログイン時 #}
     <a href="{% url 'driveapp:profile' %}" class="btn btn-secondary">プロフィール</a>
     {% if request.user.is_staff %}
-      <a href="{% url 'driveapp:master_manage' %}" class="btn btn-admin">⚙ マスタ管理</a>
+        <a href="{% url 'master:manage' %}" class="btn btn-admin">⚙ マスタ管理</a>
     {% endif %}
     <button type="button" class="btn btn-danger" id="btn-logout">ログアウト</button>
 
