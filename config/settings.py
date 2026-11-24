@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'driveapp',
     'accounts',
     'room',
+    
+    'master',
+    'mypage',
 ]
 
 MIDDLEWARE = [

@@ -36,18 +36,10 @@ def home_view(request):
 
 
 # ---- SCR-04 プロフィール ----
-def profile_view(request):
-    return render(request, 'driveapp/profile.html', {
-        'user': DUMMY_USER,
-        'titles': DUMMY_TITLES,
-        'histories': DUMMY_HISTORIES,
-    })
+
 
 
 # ---- SCR-05 ドライブ履歴詳細 ----
-def history_detail_view(request):
-    # TODO(バックエンド)：どのドライブかを ID で受け取る（設計に合わせて urls.py も変更）
-    return render(request, 'driveapp/history_detail.html', {'history': DUMMY_HISTORY})
 
 
 # ---- SCR-06 部屋作成 ----
@@ -103,9 +95,3 @@ def share_view(request):
     return render(request, 'driveapp/share.html', {'share_text': DUMMY_SHARE_TEXT})
 
 
-# ---- SCR-14 マスタ管理 ----
-def master_manage_view(request):
-    return render(request, 'driveapp/master_manage.html', {
-        'destinations': DUMMY_DESTINATIONS,
-        'missions': DUMMY_MISSIONS,
-    })

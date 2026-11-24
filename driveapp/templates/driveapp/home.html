@@ -36,18 +36,19 @@
 
   {% if request.user.is_authenticated %}
     {# 会員ログイン時 #}
-    <a href="{% url 'driveapp:profile' %}" class="btn btn-secondary">プロフィール</a>
+    <a href="{% url 'mypage:profile' %}" class="btn btn-secondary">プロフィール</a>
     {% if request.user.is_staff %}
-      <a href="{% url 'driveapp:master_manage' %}" class="btn btn-admin">⚙ マスタ管理</a>
+        <a href="{% url 'master:manage' %}" class="btn btn-admin">⚙ マスタ管理</a>
     {% endif %}
     <button type="button" class="btn btn-danger" id="btn-logout">ログアウト</button>
 
     <dialog id="logout-dialog">
       <p class="dialog-text">ログアウトしますか？</p>
+      <p class="dialog-subtext">ログアウトするとゲスト表示へ切り替わります</p>
       <div class="dialog-actions">
         <button type="button" class="btn btn-secondary" id="logout-cancel">キャンセル</button>
         {# Django の LogoutView は POST で送る必要がある #}
-        <form method="post" action="{% url 'accounts:logout' %}" style="flex:1">
+        <form method="post" action="{% url 'accounts:logout' %}"> {#style="flex:1"#}
           {% csrf_token %}
           <button type="submit" class="btn btn-danger">ログアウト</button>
         </form>

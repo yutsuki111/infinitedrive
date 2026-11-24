@@ -1,13 +1,12 @@
 ﻿{% extends 'driveapp/base.html' %}
 {% comment %}
-  SCR-04 プロフィール画面
-  views から受け取る値：
-    user        … 仮データの user.nickname（ログイン中は request.user の表示名・ユーザーIDを使う）
+  SCR-04 プロフィール画面（mypage/views.py の profile_view）
+  ログイン中の会員だけが開ける。views から受け取る値：
     titles      … 獲得称号のリスト（文字列）
-    histories   … ドライブ履歴のリスト（id, date, destination）
-    drive_count … ドライブ回数（なければ histories の件数）
-    title_count … 獲得称号数（なければ titles の件数）
-    error       … 取得失敗時のメッセージ（あると再読み込みボタンも出る）
+    histories   … ドライブ履歴のリスト（id, date, destination）新しい順
+    drive_count … ドライブ回数
+    title_count … 獲得称号数
+  表示名・ユーザーIDは request.user から表示する。
 {% endcomment %}
 
 {% block title %}プロフィール｜無限ドライブ{% endblock %}
@@ -17,14 +16,8 @@
 {% block content %}
   <div class="profile-head">
     <div class="avatar avatar-lg" aria-hidden="true">♟</div>
-    {% if request.user.is_authenticated %}
-      {# ログイン中は本物のユーザー情報を表示 #}
-      <p class="profile-name">{{ request.user.display_name|default:request.user.username }}</p>
-      <p class="muted">ユーザーID：{{ request.user.username }}</p>
-    {% else %}
-      {# 未ログイン時は views の仮データ（user.nickname）を表示 #}
-      <p class="profile-name">{{ user.nickname }}</p>
-    {% endif %}
+    <p class="profile-name">{{ request.user.display_name|default:request.user.username }}</p>
+    <p class="muted">ユーザーID：{{ request.user.username }}</p>
   </div>
 
   <div class="stats">
@@ -54,8 +47,7 @@
     <ul class="list-box">
       {% for h in histories %}
         <li>
-          {# TODO(バックエンド)：urls.py を history/<int:id>/ にしたら {% url 'driveapp:history_detail' h.id %} に変える #}
-          <a class="list-link" href="{% url 'driveapp:history_detail' %}?id={{ h.id }}">
+          <a class="list-link" href="{% url 'mypage:history_detail' h.id %}">
             🚗 {{ h.destination }}（{{ h.date }}）
           </a>
         </li>
@@ -67,6 +59,6 @@
 
   {% if error %}
     <p class="error-message">{{ error }}</p>
-    <a href="{% url 'driveapp:profile' %}" class="btn btn-secondary">再読み込み</a>
+    <a href="{% url 'mypage:profile' %}" class="btn btn-secondary">再読み込み</a>
   {% endif %}
 {% endblock %}

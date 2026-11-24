@@ -6,8 +6,6 @@ app_name = 'driveapp'
 urlpatterns = [
     # --- フロント①担当（SCR-01〜05：認証・ホーム・履歴） ---
     path('', views.home_view, name='home'),
-    path('profile/', views.profile_view, name='profile'),
-    path('history/detail/', views.history_detail_view, name='history_detail'),
 
     # --- フロント②担当（SCR-06〜09：部屋管理・役割・メイン部屋画面） ---
     # path('room/create/', views.room_create_view, name='room_create'),
@@ -20,5 +18,4 @@ urlpatterns = [
     path('drive/result/', views.result_view, name='result'),
     path('drive/calculator/', views.calculator_view, name='calculator'),
     path('drive/share/', views.share_view, name='share'),
-    path('master/', views.master_manage_view, name='master_manage'),
 ]
