@@ -16,17 +16,18 @@ class RoomCreateView(CreateView):
     form_class = CreateRoomForm
 
     def form_valid(self, form):
+        
+        # 登録する前に、上で確認作業はしないといけない
         response = super().form_valid(form)
-
         # 登録が完了してから下が動作
-        # room_codeを取得する方法？
+
         room_code = form.cleaned_data.get('room_code')
         room = Room.objects.get(room_code=room_code)
         print(room)
         print(room.room_id)
         # 会員の場合
         if not self.request.user.id is None:
-            RoomParticipation.objects.create(room_id=1, nickname=self.request.user.display_name, role="leader", safety_agreed=False, drive_status="ready", status="joined")
+            RoomParticipation.objects.create(room_id=room.room_id, account_id=self.request.user.id, nickname=self.request.user.display_name, role="leader", safety_agreed=False, drive_status="ready", status="joined")
         # ゲストの場合
         else:
             pass
