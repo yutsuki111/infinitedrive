@@ -32,7 +32,7 @@
   </div>
 
   <a href="{% url 'room:create' %}" class="btn btn-primary">＋ 部屋作成（1人／みんな）</a>
-  <a href="{% url 'driveapp:room_join' %}" class="btn btn-secondary">♧ 部屋参加</a>
+  <a href="{% url 'room:join' %}" class="btn btn-secondary">♧ 部屋参加</a>
 
   {% if request.user.is_authenticated %}
     {# 会員ログイン時 #}
