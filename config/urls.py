@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('driveapp.urls')),
     path('accounts/', include('accounts.urls')),
+    path('room/', include('room.urls')),
 
     path('master/', include('master.urls')),
     path('mypage/', include('mypage.urls'))
