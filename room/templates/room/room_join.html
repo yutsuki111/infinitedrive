@@ -1,16 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    部屋参加
-    <form method="POST">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">送信</button>
-    </form>
-</body>
-</html>
+{% extends 'driveapp/base.html' %}
+{% comment %}
+  SCR-07 部屋参加画面（room/views.py の RoomJoinView）
+  入力欄の name は room/forms.py の JoinRoomForm に合わせている：
+    room_code（部屋番号） / passphrase（合言葉） / nickname（参加ニックネーム）
+{% endcomment %}
+
+{% block title %}部屋参加｜無限ドライブ{% endblock %}
+{% block back_url %}{% url 'driveapp:home' %}{% endblock %}
+{% block page_title %}部屋参加{% endblock %}
+
+{% block content %}
+  {% include 'driveapp/includes/logo.html' %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="id_room_code">部屋番号</label>
+      <input type="text" id="id_room_code" name="room_code"
+             class="input{% if form.room_code.errors %} is-error{% endif %}"
+             placeholder="4桁の部屋番号" maxlength="4" inputmode="numeric"
+             value="{{ form.room_code.value|default:'' }}" required>
+      {% for e in form.room_code.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="form-group">
+      <label for="id_passphrase">合言葉</label>
+      <input type="text" id="id_passphrase" name="passphrase"
+             class="input{% if form.passphrase.errors %} is-error{% endif %}"
+             placeholder="合言葉を入力" maxlength="20" required>
+      {% for e in form.passphrase.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="form-group">
+      <label for="id_nickname">参加ニックネーム</label>
+      <input type="text" id="id_nickname" name="nickname"
+             class="input{% if form.nickname.errors %} is-error{% endif %}"
+             placeholder="例：はなこ" maxlength="20"
+             value="{{ form.nickname.value|default:'' }}" required>
+      {% for e in form.nickname.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    </div>
+
+    <button type="submit" name="btn-join" class="btn btn-primary">参加</button>
+  </form>
+
+  {% for e in form.non_field_errors %}
+    <p class="error-message">{{ e }}</p>
+  {% endfor %}
+{% endblock %}

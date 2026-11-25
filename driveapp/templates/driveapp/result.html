@@ -29,7 +29,8 @@
 
   <div style="margin-top:20px">
     {% if is_leader is not False %}
-      <a href="{% url 'driveapp:room' %}" class="btn btn-primary">もう一度（同じ部屋で再抽選）</a>
+      {# TODO(部屋担当)：部屋画面のURLが決まったら room:top に変える #}
+      <a href="{% url 'driveapp:home' %}" class="btn btn-primary">もう一度（同じ部屋で再抽選）</a>
     {% endif %}
     <a href="{% url 'driveapp:calculator' %}" class="btn btn-secondary">割り勘・ガソリン代電卓</a>
     <a href="{% url 'driveapp:share' %}" class="btn btn-secondary">結果をシェア</a>
