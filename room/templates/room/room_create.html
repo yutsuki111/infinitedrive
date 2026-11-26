@@ -1,8 +1,9 @@
 {% extends 'driveapp/base.html' %}
 {% comment %}
-  SCR-06 部屋作成画面（room/views.py の RoomCreateView）
+  SCR-06 部屋作成画面（room/views.py の room_create_view）
   入力欄の name は room/forms.py の CreateRoomForm に合わせている：
-    room_code（部屋番号） / room_name（部屋名） / passphrase_hash（合言葉）
+    room_name（部屋名） / passphrase（合言葉） / nickname（参加ニックネーム）
+  部屋番号は自動で発行するので入力欄はない。
 {% endcomment %}
 
 {% block title %}部屋作成｜無限ドライブ{% endblock %}
@@ -11,6 +12,7 @@
 
 {% block content %}
   {% include 'driveapp/includes/logo.html' %}
+  {% include 'driveapp/includes/messages.html' %}
 
   <form method="post" novalidate>
     {% csrf_token %}
@@ -25,21 +27,21 @@
     </div>
 
     <div class="form-group">
-      {# TODO(部屋担当)：設計では部屋番号は自動で発行する。自動にしたらこの欄は消す #}
-      <label for="id_room_code">部屋番号（4桁）</label>
-      <input type="text" id="id_room_code" name="room_code"
-             class="input{% if form.room_code.errors %} is-error{% endif %}"
-             placeholder="例：4821" maxlength="4" inputmode="numeric"
-             value="{{ form.room_code.value|default:'' }}" required>
-      {% for e in form.room_code.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+      <label for="id_passphrase">合言葉</label>
+      <input type="text" id="id_passphrase" name="passphrase"
+             class="input{% if form.passphrase.errors %} is-error{% endif %}"
+             placeholder="半角英数字で入力" maxlength="20" required>
+      {% for e in form.passphrase.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+      <p class="help-text">仲間を呼ぶときに、部屋番号と一緒に伝えます</p>
     </div>
 
     <div class="form-group">
-      <label for="id_passphrase_hash">合言葉</label>
-      <input type="text" id="id_passphrase_hash" name="passphrase_hash"
-             class="input{% if form.passphrase_hash.errors %} is-error{% endif %}"
-             placeholder="半角英数字で入力" maxlength="20" required>
-      {% for e in form.passphrase_hash.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+      <label for="id_nickname">参加ニックネーム</label>
+      <input type="text" id="id_nickname" name="nickname"
+             class="input{% if form.nickname.errors %} is-error{% endif %}"
+             placeholder="例：たろう" maxlength="20"
+             value="{{ form.nickname.value|default:'' }}" required>
+      {% for e in form.nickname.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
     </div>
 
     <button type="submit" name="btn-create" class="btn btn-primary">作成</button>

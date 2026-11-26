@@ -28,8 +28,9 @@
 
 {% block content %}
 {% firstof status request.GET.preview 'waiting' as st %}
-
+  <a href="{% url 'driveapp:home' %}" class="back-link" style="font-size:15px; display:inline-block; margin-bottom:12px;">← ホーム</a>
   {# ---------- 部屋名・部屋番号・状態 ---------- #}
+  
   <div class="room-head">
     <div>
       <h1 class="room-name">{{ room.room_name|default:'部屋名' }}</h1>
@@ -43,6 +44,8 @@
       <span class="badge">待機中</span>
     {% endif %}
   </div>
+
+  {% include 'driveapp/includes/messages.html' %}
 
   {# ---------- メンバー ---------- #}
   <section class="panel">

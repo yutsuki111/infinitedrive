@@ -1,0 +1,8 @@
+{# Django の messages（「〇〇しました」など）を表示する。{% include 'driveapp/includes/messages.html' %} で使う #}
+{% for m in messages %}
+  {% if m.level_tag == 'error' %}
+    <p class="error-message">{{ m }}</p>
+  {% else %}
+    <p class="success-message">{{ m }}</p>
+  {% endif %}
+{% endfor %}

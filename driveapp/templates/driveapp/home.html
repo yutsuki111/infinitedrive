@@ -16,6 +16,7 @@
 
 {% block content %}
   {% include 'driveapp/includes/logo.html' %}
+  {% include 'driveapp/includes/messages.html' %}
 
   <div class="card">
     <div class="avatar" aria-hidden="true">♟</div>
@@ -31,8 +32,13 @@
     </div>
   </div>
 
+  {% if current_participation %}
+    {# 部屋に参加中なら、その部屋へ戻るボタンを出す（作成・参加は二重参加になるので出さない） #}
+    <a href="{% url 'room:top' current_participation.room_id %}" class="btn btn-primary">▶ 部屋「{{ current_participation.room.room_name }}」に戻る</a>
+  {% else %}
   <a href="{% url 'room:create' %}" class="btn btn-primary">＋ 部屋作成（1人／みんな）</a>
   <a href="{% url 'room:join' %}" class="btn btn-secondary">♧ 部屋参加</a>
+  {% endif %}
 
   {% if request.user.is_authenticated %}
     {# 会員ログイン時 #}
