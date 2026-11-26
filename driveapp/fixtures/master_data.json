@@ -1552,4 +1552,230 @@
     "updated_at": "2026-11-24T04:52:15Z"
   }
 }
+,
+{
+  "model": "driveapp.destination",
+  "pk": 5001,
+  "fields": {
+    "name": "小倉城",
+    "address": null,
+    "latitude": "33.884700",
+    "longitude": "130.875100",
+    "companion_tag": "1人",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5002,
+  "fields": {
+    "name": "門司港レトロ地区",
+    "address": null,
+    "latitude": "33.945000",
+    "longitude": "130.966000",
+    "companion_tag": "1人",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5003,
+  "fields": {
+    "name": "若松南海岸",
+    "address": null,
+    "latitude": "33.904800",
+    "longitude": "130.808500",
+    "companion_tag": "1人",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5004,
+  "fields": {
+    "name": "九州鉄道記念館",
+    "address": "北九州市門司区清滝2丁目3-29",
+    "latitude": "33.943200",
+    "longitude": "130.961800",
+    "companion_tag": "1人",
+    "mood_tag": "のんびり",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5005,
+  "fields": {
+    "name": "旦過市場",
+    "address": null,
+    "latitude": "33.879500",
+    "longitude": "130.880700",
+    "companion_tag": "1人",
+    "mood_tag": "のんびり",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5006,
+  "fields": {
+    "name": "門司港駅",
+    "address": null,
+    "latitude": "33.945600",
+    "longitude": "130.961700",
+    "companion_tag": "1人",
+    "mood_tag": "のんびり",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5007,
+  "fields": {
+    "name": "小倉城",
+    "address": null,
+    "latitude": "33.884700",
+    "longitude": "130.875100",
+    "companion_tag": "友達",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5008,
+  "fields": {
+    "name": "門司港レトロ地区",
+    "address": null,
+    "latitude": "33.945000",
+    "longitude": "130.966000",
+    "companion_tag": "友達",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5009,
+  "fields": {
+    "name": "若松南海岸",
+    "address": null,
+    "latitude": "33.904800",
+    "longitude": "130.808500",
+    "companion_tag": "友達",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5010,
+  "fields": {
+    "name": "小倉城",
+    "address": null,
+    "latitude": "33.884700",
+    "longitude": "130.875100",
+    "companion_tag": "恋人",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5011,
+  "fields": {
+    "name": "門司港レトロ地区",
+    "address": null,
+    "latitude": "33.945000",
+    "longitude": "130.966000",
+    "companion_tag": "恋人",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5012,
+  "fields": {
+    "name": "若松南海岸",
+    "address": null,
+    "latitude": "33.904800",
+    "longitude": "130.808500",
+    "companion_tag": "恋人",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5013,
+  "fields": {
+    "name": "小倉城",
+    "address": null,
+    "latitude": "33.884700",
+    "longitude": "130.875100",
+    "companion_tag": "家族",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5014,
+  "fields": {
+    "name": "門司港レトロ地区",
+    "address": null,
+    "latitude": "33.945000",
+    "longitude": "130.966000",
+    "companion_tag": "家族",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+},
+{
+  "model": "driveapp.destination",
+  "pk": 5015,
+  "fields": {
+    "name": "若松南海岸",
+    "address": null,
+    "latitude": "33.904800",
+    "longitude": "130.808500",
+    "companion_tag": "家族",
+    "mood_tag": "夜景・絶景",
+    "status": "active",
+    "created_at": "2026-11-26T02:00:00Z",
+    "updated_at": "2026-11-26T02:00:00Z"
+  }
+}
 ]
