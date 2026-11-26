@@ -16,7 +16,8 @@
 
   このページのフォームはすべて同じURL（room:top）に POST します。
   どのボタンかは hidden の action で分かるようにしています：
-    gacha（ガチャ） / depart（出発） / arrive（到着） / arrive_all（まとめて到着）
+    ※ ガチャ・引き直しは drive:gacha に POST（drive/views.py）
+    depart（出発） / arrive（到着） / arrive_all（まとめて到着）
     post（TL投稿） / mission（ミッション報告） / leave（退出・解散）
 
   ★ 画面確認用：views が status を渡していない間は、URLの最後に
@@ -66,9 +67,8 @@
   {% if st == 'waiting' %}
     <section class="panel">
       <h2 class="section-title">ガチャ条件</h2>
-      <form method="post" action="{% url 'room:top' room_id %}">
+      <form method="post" action="{% url 'drive:gacha' %}">
         {% csrf_token %}
-        <input type="hidden" name="action" value="gacha">
 
         <div class="form-group">
           <label for="companion">同行者</label>
@@ -115,9 +115,8 @@
 
   {% if st == 'gacha_fixed' %}
     {% if is_leader is not False %}
-      <form method="post" action="{% url 'room:top' room_id %}">
+      <form method="post" action="{% url 'drive:gacha' %}">
         {% csrf_token %}
-        <input type="hidden" name="action" value="gacha">
         <button type="submit" name="btn-draw" class="btn btn-secondary">もう一度引く</button>
       </form>
     {% endif %}
