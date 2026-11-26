@@ -25,6 +25,8 @@
 {% endblock %}
 
 {% block content %}
+  <p class="center" style="margin-top:24px"><a href="{% url 'driveapp:home' %}" class="text-link">ホームへ</a></p>
+
   <div class="tabs" role="tablist">
     <button type="button" class="tab is-active" data-tab="destination">📍 目的地管理</button>
     <button type="button" class="tab" data-tab="mission">🎯 ミッション管理</button>
@@ -102,6 +104,7 @@
     {% empty %}
       <p class="muted">登録された目的地はありません</p>
     {% endfor %}
+    
   </section>
 
   {# ---------- ミッション一覧 ---------- #}
@@ -123,7 +126,6 @@
     {% endfor %}
   </section>
 
-  <p class="center" style="margin-top:24px"><a href="{% url 'driveapp:home' %}" class="text-link">ホームへ戻る</a></p>
 
   {# ---------- 削除確認 ---------- #}
   <dialog id="delete-dialog">
