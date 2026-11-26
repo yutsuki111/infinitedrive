@@ -1,88 +1,155 @@
-from django.shortcuts import render
-from django.views.generic import CreateView, TemplateView
-from django.urls import reverse
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import *
+"""
+部屋管理（SCR-06 部屋作成 ／ SCR-07 部屋参加 ／ SCR-09 部屋画面）
+
+・会員もゲストも使える（ゲストは guest_sessions で見分ける。room/utils.py 参照）
+・作成・参加したら、session に「今の参加情報」を入れる
+  → ほかの画面は room.utils.get_current_participation(request) で取れる
+・合言葉はハッシュ化して保存する（Django の make_password / check_password）
+・部屋番号は4桁を自動で発行する
+"""
+
+from django.contrib import messages
+from django.contrib.auth.hashers import check_password, make_password
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+
 from driveapp.models import Room, RoomParticipation
 
-
-# Create your views here.
-class RoomView(TemplateView):
-    template_name = "room/room.html"
-
-
-class RoomCreateView(CreateView):
-    template_name = "room/room_create.html"
-    form_class = CreateRoomForm
-
-    def form_valid(self, form):
-        
-        # 登録する前に、上で確認作業はしないといけない
-        response = super().form_valid(form)
-        # 登録が完了してから下が動作
-
-        room_code = form.cleaned_data.get('room_code')
-        room = Room.objects.get(room_code=room_code)
-        # 会員の場合
-        if not self.request.user.id is None:
-            RoomParticipation.objects.create(room_id=room.room_id, account_id=self.request.user.id, nickname=self.request.user.display_name, role="leader", safety_agreed=False, drive_status="ready", status="joined")
-        # ゲストの場合
-        else:
-            pass
-
-        return response
-
-    def get_success_url(self):
-        return reverse('room:top', kwargs={'room_id':self.object.room_id})
+from .forms import CreateRoomForm, JoinRoomForm
+from .utils import (
+    clear_current_participation,
+    generate_room_code,
+    get_current_participation,
+    get_or_create_guest,
+    set_current_participation,
+)
 
 
-class RoomJoinView(CreateView):
-    template_name = "room/room_join.html"
-    form_class = JoinRoomForm
+# ------------------------------------------------------------
+# SCR-06 部屋作成
+# ------------------------------------------------------------
+def room_create_view(request):
+    # すでにどこかの部屋に入っている人は、その部屋に戻す（二重参加の防止）
+    current = get_current_participation(request)
+    if current:
+        messages.info(request, f'すでに部屋「{current.room.room_name}」に参加中です。')
+        return redirect('room:top', room_id=current.room_id)
 
-    def form_valid(self, form):
-        model = form.save(commit=False)
+    if request.method == 'POST':
+        form = CreateRoomForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            with transaction.atomic():
+                room = Room.objects.create(
+                    room_code=generate_room_code(),
+                    room_name=data['room_name'],
+                    passphrase_hash=make_password(data['passphrase']),
+                )
+                participation = _join(request, room, data['nickname'], role='leader')
+            set_current_participation(request, participation)
+            return redirect('room:top', room_id=room.room_id)
+    else:
+        form = CreateRoomForm(initial={'nickname': _default_nickname(request)})
 
-        model.account_id = self.request.user.id
-
-        ROOM_CODE = form.cleaned_data.get('room_code')
-        PASSPHRASE = form.cleaned_data.get('passphrase')
-        model.room_id = Room.objects.get(room_code=ROOM_CODE, passphrase_hash=PASSPHRASE).room_id
+    return render(request, 'room/room_create.html', {'form': form})
 
 
-        # try:
-        #     user = User.objects.get(pk=id)
-        #     # ここに何か書く
-        # except User.DoesNotExist:
-        #     pass
+# ------------------------------------------------------------
+# SCR-07 部屋参加
+# ------------------------------------------------------------
+def room_join_view(request):
+    current = get_current_participation(request)
+    if current:
+        messages.info(request, f'すでに部屋「{current.room.room_name}」に参加中です。')
+        return redirect('room:top', room_id=current.room_id)
 
-        # # 部屋の存在と合言葉を確認する
-        # room_exists = Room.objects.get(room_code=model.room_code, passphrase_hash=model.passphrase_hash)
+    if request.method == 'POST':
+        form = JoinRoomForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            room = (Room.objects.exclude(status='dissolved')
+                    .filter(room_code=data['room_code']).first())
+            # 部屋がない・合言葉が違う、はどちらも同じメッセージにする（どちらが違うか教えない）
+            if room is None or not check_password(data['passphrase'], room.passphrase_hash):
+                form.add_error(None, '部屋番号または合言葉が正しくありません。')
+            else:
+                participation = _join(request, room, data['nickname'], role='member')
+                set_current_participation(request, participation)
+                return redirect('room:top', room_id=room.room_id)
+    else:
+        form = JoinRoomForm(initial={'nickname': _default_nickname(request)})
 
-        # # 会員IDまたはゲストIDを取得する
-        # USER_ID = self.request.user.id
+    return render(request, 'room/room_join.html', {'form': form})
 
-        # # 現在の参加人数と参加状況を確認する
-        # CurrentNumberOfParticipants = RoomParticipation.objects.all.filter(left_at__isnull=True).count()
 
-        # MAX_PARTICIPANTS_NUMBER = 20
+# ------------------------------------------------------------
+# SCR-09 部屋画面
+# ------------------------------------------------------------
+def room_view(request, room_id):
+    room = get_object_or_404(Room, pk=room_id)
+    me = get_current_participation(request)
+    if me is None or me.room_id != room.room_id:
+        messages.error(request, 'この部屋には参加していません。部屋番号と合言葉で参加してください。')
+        return redirect('room:join')
 
-        # # 最大を超えていた場合、エラーとしたい
-        # if (CurrentNumberOfParticipants > MAX_PARTICIPANTS_NUMBER):
-        #     pass
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'leave':
+            return _leave(request, me)
+        # TODO(ドライブ担当)：gacha / depart / arrive / arrive_all / post / mission はここで処理する
+        messages.info(request, 'この機能はまだ作成中です。')
+        return redirect('room:top', room_id=room.room_id)
 
-        # # 会員の場合
-        # if not self.request.user.id is None:
-        #     ParticipationStatus = RoomParticipation.objects.all.filter(account_id=self.request.user.id, status="参加中").count()
-        # # ゲストの場合
-        # else:
-        #     pass
+    members = list(room.participations.filter(status='joined').order_by('joined_at'))
+    return render(request, 'room/room.html', {
+        'room_id': room.room_id,
+        'room': room,
+        'status': room.status,               # waiting / gacha_fixed / driving
+        'is_leader': me.role == 'leader',
+        'is_solo': len(members) == 1,
+        'members': [
+            {'id': m.pk, 'nickname': m.nickname, 'is_leader': m.role == 'leader'}
+            for m in members
+        ],
+    })
 
-        # # 別の部屋に参加していた場合、エラーとしたい
-        # if not ParticipationStatus == 0:
-        #     pass
 
-        return super().form_valid(form)
+# ------------------------------------------------------------
+# 退出（一般参加者）・解散（代表者）
+# ------------------------------------------------------------
+def _leave(request, me):
+    room = me.room
+    if me.role == 'leader':
+        # 解散：部屋を物理削除（参加情報・ドライブ・投稿も一緒に消える。ドライブ履歴は残る）
+        name = room.room_name
+        room.delete()
+        messages.success(request, f'部屋「{name}」を解散しました。')
+    else:
+        me.status = 'left'
+        me.left_at = timezone.now()
+        me.save()
+        messages.success(request, f'部屋「{room.room_name}」から退出しました。')
+    clear_current_participation(request)
+    return redirect('driveapp:home')
 
-    def get_success_url(self):
-        return reverse('room:top', kwargs={'room_id':self.object.room_id})
+
+# ------------------------------------------------------------
+# 小さな部品
+# ------------------------------------------------------------
+def _join(request, room, nickname, role):
+    """会員なら account、ゲストなら guest を付けて参加情報を作る"""
+    if request.user.is_authenticated:
+        return RoomParticipation.objects.create(
+            room=room, account=request.user, nickname=nickname, role=role)
+    guest = get_or_create_guest(request, nickname)
+    return RoomParticipation.objects.create(
+        room=room, guest=guest, nickname=nickname, role=role)
+
+
+def _default_nickname(request):
+    """会員は表示名を最初から入れておく（画面設計書：会員は表示名を初期設定）"""
+    if request.user.is_authenticated:
+        return getattr(request.user, 'display_name', '') or request.user.get_username()
+    return ''
+

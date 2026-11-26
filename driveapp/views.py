@@ -42,33 +42,12 @@ def home_view(request):
 # ---- SCR-05 ドライブ履歴詳細 ----
 
 
-# ---- SCR-06 部屋作成 ----
-def room_create_view(request):
-    if request.method == 'POST':
-        # TODO(バックエンド)：部屋を作成する
-        return redirect('driveapp:room')
-    return render(request, 'driveapp/room_create.html')
-
-
-# ---- SCR-07 部屋参加 ----
-def room_join_view(request):
-    if request.method == 'POST':
-        # TODO(バックエンド)：部屋番号と合言葉を照合する
-        return redirect('driveapp:role_select')
-    return render(request, 'driveapp/room_join.html')
-
-
 # ---- SCR-08 役割選択 ----
 def role_select_view(request):
     if request.method == 'POST':
         # TODO(バックエンド)：役割と安全同意を保存する
         return redirect('driveapp:room')
     return render(request, 'driveapp/role_select.html')
-
-
-# ---- SCR-09 部屋画面（メイン）----
-def room_view(request):
-    return render(request, 'driveapp/room.html', {'destinations': DUMMY_DESTINATIONS})
 
 
 # ---- SCR-10 目的地評価 ----
