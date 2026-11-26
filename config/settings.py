@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'driveapp',
     'accounts',
     'room',
+    'drive',
     
     'master',
     'mypage',

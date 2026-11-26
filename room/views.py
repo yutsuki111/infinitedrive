@@ -14,7 +14,10 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from driveapp.models import Room, RoomParticipation
+from django.utils.timezone import localtime
+
+from drive.utils import get_active_mission, get_current_drive
+from driveapp.models import Room, RoomParticipation, TimelinePost
 
 from .forms import CreateRoomForm, JoinRoomForm
 from .utils import (
@@ -97,11 +100,14 @@ def room_view(request, room_id):
         action = request.POST.get('action')
         if action == 'leave':
             return _leave(request, me)
-        # TODO(ドライブ担当)：gacha / depart / arrive / arrive_all / post / mission はここで処理する
+        # ガチャは drive アプリ（drive:gacha）で処理済み
+        # TODO(ドライブ担当)：depart / arrive / arrive_all / post / mission も drive アプリに作る
         messages.info(request, 'この機能はまだ作成中です。')
         return redirect('room:top', room_id=room.room_id)
 
     members = list(room.participations.filter(status='joined').order_by('joined_at'))
+    drive = get_current_drive(room)
+    last_companion, last_mood = request.session.get('gacha_conditions') or [None, None]
     return render(request, 'room/room.html', {
         'room_id': room.room_id,
         'room': room,
@@ -112,6 +118,12 @@ def room_view(request, room_id):
             {'id': m.pk, 'nickname': m.nickname, 'is_leader': m.role == 'leader'}
             for m in members
         ],
+        # ガチャの結果（drive アプリ）
+        'destination': drive.destination if drive else None,
+        'mission': get_active_mission(drive),
+        'companion': drive.companion_tag if drive else last_companion,
+        'mood': drive.mood_tag if drive else last_mood,
+        'posts': _timeline(room),
     })
 
 
@@ -132,6 +144,34 @@ def _leave(request, me):
         messages.success(request, f'部屋「{room.room_name}」から退出しました。')
     clear_current_participation(request)
     return redirect('driveapp:home')
+
+
+# ------------------------------------------------------------
+# タイムライン（古い順）
+# ------------------------------------------------------------
+def _timeline(room):
+    # 投稿者の名前は、その部屋での参加ニックネームを使う（退出した人も含める）
+    names = {}
+    for p in room.participations.all():
+        names[('a', p.account_id)] = p.nickname
+        names[('g', p.guest_id)] = p.nickname
+    posts = []
+    for post in TimelinePost.objects.filter(room=room).order_by('created_at'):
+        if post.account_id:
+            nickname = names.get(('a', post.account_id), '')
+        elif post.guest_id:
+            nickname = names.get(('g', post.guest_id), '')
+        else:
+            nickname = ''
+        image = post.images.order_by('display_order').first()
+        posts.append({
+            'post_type': post.post_type,
+            'nickname': nickname,
+            'time': localtime(post.created_at).strftime('%H:%M'),
+            'content': post.content or '',
+            'image_url': image.image_url if image else None,
+        })
+    return posts
 
 
 # ------------------------------------------------------------
