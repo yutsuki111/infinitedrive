@@ -1,10 +1,6 @@
-{% extends 'driveapp/base.html' %}
-{% comment %}
-  SCR-06 部屋作成画面（room/views.py の room_create_view）
-  入力欄の name は room/forms.py の CreateRoomForm に合わせている：
-    room_name（部屋名） / passphrase（合言葉） / nickname（参加ニックネーム）
-  部屋番号は自動で発行するので入力欄はない。
-{% endcomment %}
+<!-- ベーステンプレートを適用する -->
+<!-- SCR-06 部屋作成画面（部屋番号は自動で発行するので入力欄はない） -->
+{% extends "driveapp/base.html" %}
 
 {% block title %}部屋作成｜無限ドライブ{% endblock %}
 {% block back_url %}{% url 'driveapp:home' %}{% endblock %}

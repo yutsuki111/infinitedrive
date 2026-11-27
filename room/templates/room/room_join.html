@@ -1,10 +1,6 @@
-{% extends 'driveapp/base.html' %}
-{% comment %}
-  SCR-07 部屋参加画面（room/views.py の room_join_view）
-  入力欄の name は room/forms.py の JoinRoomForm に合わせている：
-    room_code（部屋番号） / passphrase（合言葉） / nickname（参加ニックネーム）
-  部屋番号・合言葉の間違いは「部屋番号または合言葉が正しくありません。」を出し、両方の欄を赤枠にする。
-{% endcomment %}
+<!-- ベーステンプレートを適用する -->
+<!-- SCR-07 部屋参加画面（部屋番号・合言葉が違うときは両方の欄を赤枠にする） -->
+{% extends "driveapp/base.html" %}
 
 {% block title %}部屋参加｜無限ドライブ{% endblock %}
 {% block back_url %}{% url 'driveapp:home' %}{% endblock %}
