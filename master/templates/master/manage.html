@@ -1,20 +1,6 @@
-﻿{% extends 'driveapp/base.html' %}
-{% comment %}
-  SCR-14 マスタ管理画面（管理者専用）
-  views から受け取る値：
-    destinations … 目的地のリスト（pk, name, latitude, longitude, companion_tag, mood_tag）
-    missions     … ミッションのリスト（pk, title, companion_tag, mood_tag）
-    active_tab   … 最初に開くタブ（'destination' / 'mission'）
-    error        … 入力エラーなどのメッセージ
-    message      … 保存・削除が成功したときのメッセージ
-    form_data    … 入力エラー時に、フォームを開き直すための入力内容
-  処理は master/views.py
-
-  送信する値（すべて master:manage に POST）：
-    保存：action=save, master_type（destination/mission）, master_id（新規は空）,
-          master_name, latitude, longitude, companion_tag, mood_tag
-    削除：action=delete, master_type, master_id
-{% endcomment %}
+<!-- ベーステンプレートを適用する -->
+{% extends 'driveapp/base.html' %}
+<!-- マスタ管理画面（SCR-14）処理は master/views.py の ManageView -->
 
 {% block title %}マスタ管理｜無限ドライブ{% endblock %}
 
@@ -32,7 +18,9 @@
     <button type="button" class="tab" data-tab="mission">🎯 ミッション管理</button>
   </div>
 
-  {% if message %}<p class="success-message">{{ message }}</p>{% endif %}
+  <!-- 「保存しました」などのメッセージ -->
+  {% include 'driveapp/includes/messages.html' %}
+  <!-- 入力エラー -->
   {% if error %}<p class="error-message">{{ error }}</p>{% endif %}
 
   <button type="button" class="btn btn-primary" id="btn-add">＋ 新規データ追加</button>
@@ -46,7 +34,8 @@
 
     <div class="form-group">
       <label for="f-name" id="f-name-label">スポット名称 *</label>
-      <input type="text" id="f-name" name="master_name" class="input" maxlength="100" required>
+      <!-- 目的地のときは name、ミッションのときは title として送る -->
+      <input type="text" id="f-name" name="name" class="input" maxlength="100" required>
     </div>
 
     <div class="form-row" id="f-latlng">
@@ -171,6 +160,7 @@
     if (data.companion) $('f-companion').value = data.companion;
     if (data.mood) $('f-mood').value = data.mood;
     $('f-name-label').textContent = isDest ? 'スポット名称 *' : 'ミッション内容 *';
+    $('f-name').name = isDest ? 'name' : 'title';
     $('f-latlng').hidden = !isDest;     // ミッションには緯度経度がない
     $('f-error').hidden = true;
     form.hidden = false;
