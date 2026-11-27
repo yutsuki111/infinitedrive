@@ -1,64 +1,56 @@
-﻿{% extends 'driveapp/base.html' %}
-{% comment %}
-  SCR-04 プロフィール画面（mypage/views.py の profile_view）
-  ログイン中の会員だけが開ける。views から受け取る値：
-    titles      … 獲得称号のリスト（文字列）
-    histories   … ドライブ履歴のリスト（id, date, destination）新しい順
-    drive_count … ドライブ回数
-    title_count … 獲得称号数
-  表示名・ユーザーIDは request.user から表示する。
-{% endcomment %}
+<!-- ベーステンプレートを適用する -->
+<!-- SCR-04 プロフィール画面（ログインした会員だけが開ける） -->
+{% extends "driveapp/base.html" %}
 
 {% block title %}プロフィール｜無限ドライブ{% endblock %}
-{% block back_url %}{% url 'driveapp:home' %}{% endblock %}
+{% block back_url %}{% url "driveapp:home" %}{% endblock %}
 {% block page_title %}プロフィール{% endblock %}
 
 {% block content %}
+  <!-- 名前とユーザーID -->
   <div class="profile-head">
     <div class="avatar avatar-lg" aria-hidden="true">♟</div>
     <p class="profile-name">{{ request.user.display_name|default:request.user.username }}</p>
     <p class="muted">ユーザーID：{{ request.user.username }}</p>
   </div>
 
+  <!-- ドライブ回数と称号の数 -->
   <div class="stats">
     <div class="stat">
       <p class="stat-label">ドライブ回数</p>
-      <p class="stat-value">{% firstof drive_count histories|length '0' %}回</p>
+      <p class="stat-value">{{ drive_count }}回</p>
     </div>
     <div class="stat">
       <p class="stat-label">獲得称号数</p>
-      <p class="stat-value">{% firstof title_count titles|length '0' %}個</p>
+      <p class="stat-value">{{ title_count }}個</p>
     </div>
   </div>
 
+  <!-- 獲得称号一覧 -->
   <h2 class="section-title">獲得称号一覧</h2>
   {% if titles %}
     <ul class="list-box">
-      {% for title in titles %}
-        <li>🏆 {{ title }}</li>
+      {% for t in titles %}
+        <li>🏆 {{ t.achievement.name }}</li>
       {% endfor %}
     </ul>
   {% else %}
     <p class="muted">獲得した称号はありません</p>
   {% endif %}
 
+  <!-- ドライブ履歴一覧（押すと詳細へ） -->
   <h2 class="section-title">ドライブ履歴一覧</h2>
   {% if histories %}
     <ul class="list-box">
       {% for h in histories %}
         <li>
-          <a class="list-link" href="{% url 'mypage:history_detail' h.id %}">
-            🚗 {{ h.destination }}（{{ h.date }}）
+          <a class="list-link" href="{% url "mypage:history_detail" h.pk %}">
+            🚗 {{ h.destination_name_snapshot }}（{{ h.started_at|date:"Y/m/d" }}）
           </a>
         </li>
       {% endfor %}
     </ul>
   {% else %}
     <p class="muted">ドライブ履歴はありません</p>
-  {% endif %}
-
-  {% if error %}
-    <p class="error-message">{{ error }}</p>
-    <a href="{% url 'mypage:profile' %}" class="btn btn-secondary">再読み込み</a>
   {% endif %}
 {% endblock %}
