@@ -1,28 +1,7 @@
-﻿{% extends 'driveapp/base.html' %}
-{% comment %}
-  SCR-09 部屋画面（メイン）
-  views から受け取る値：
-    room        … room.room_name（部屋名）, room.room_code（4桁の部屋番号）
-    status      … 'waiting'（待機中）／'gacha_fixed'（ガチャ確定後）／'driving'（走行中）
-    is_leader   … 代表者なら True（False のときガチャ操作を非活性・「退出」表示）
-    is_solo     … 1人参加なら True（まとめて到着を出さない）
-    members     … 参加者のリスト（id, nickname, is_leader）
-    companion / mood … 今選ばれているガチャ条件
-    destination … ガチャ結果の目的地（name, latitude, longitude, image_url）
-    mission     … ガチャ結果のミッション（title）
-    posts       … タイムライン投稿のリスト（nickname, time, content, post_type, image_url）
-                  post_type は 'normal' / 'mission' / 'system'
-    error       … エラーメッセージ
-
-  このページのフォームはすべて同じURL（room:top）に POST します。
-  どのボタンかは hidden の action で分かるようにしています：
-    ※ ガチャ・引き直しは drive:gacha に POST（drive/views.py）
-    depart（出発） / arrive（到着） / arrive_all（まとめて到着）
-    post（TL投稿） / mission（ミッション報告） / leave（退出・解散）
-
-  ★ 画面確認用：views が status を渡していない間は、URLの最後に
-     ?preview=gacha_fixed や ?preview=driving を付けると状態を切り替えて見られます。
-{% endcomment %}
+<!-- ベーステンプレートを適用する -->
+<!-- SCR-09 部屋画面（メイン） -->
+<!-- このページのボタンは hidden の action で見分ける（ガチャは drive:gacha に送る） -->
+{% extends "driveapp/base.html" %}
 
 {% block title %}{{ room.room_name|default:'部屋' }}｜無限ドライブ{% endblock %}
 {% block header %}{% endblock %}
