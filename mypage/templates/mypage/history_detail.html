@@ -1,61 +1,53 @@
-﻿{% extends 'driveapp/base.html' %}
-{% comment %}
-  SCR-05 ドライブ履歴詳細画面（mypage/views.py の history_detail_view）
-  views から受け取る値：
-    history … destination（目的地名）
-              started_at / ended_at（出発・到着日時。なければ date を表示）
-              titles（獲得称号のリスト）
-              missions（達成ミッションのリスト）
-              photo_url（保存写真のURL）
-    error   … 取得失敗時のメッセージ
-{% endcomment %}
+<!-- ベーステンプレートを適用する -->
+<!-- SCR-05 ドライブ履歴詳細画面（自分が参加したドライブだけ見られる） -->
+{% extends "driveapp/base.html" %}
 
 {% block title %}ドライブ履歴詳細｜無限ドライブ{% endblock %}
-{% block back_url %}{% url 'mypage:profile' %}{% endblock %}
+{% block back_url %}{% url "mypage:profile" %}{% endblock %}
 {% block page_title %}ドライブ履歴詳細{% endblock %}
 
 {% block content %}
-  {% if history.photo_url %}
-    <img src="{{ history.photo_url }}" alt="" class="photo photo-main">
+  <!-- 上の大きい写真（なければ灰色の枠） -->
+  {% if participation.saved_image_url %}
+    <img src="{{ participation.saved_image_url }}" alt="" class="photo photo-main">
   {% else %}
     <div class="photo-placeholder" aria-hidden="true"></div>
   {% endif %}
 
-  <h2 class="section-title">📍 {{ history.destination }}</h2>
+  <!-- 目的地と日時 -->
+  <h2 class="section-title">📍 {{ history.destination_name_snapshot }}</h2>
   <div class="box">
-    <p>出発日時：{% firstof history.started_at history.date %}</p>
-    <p>到着日時：{{ history.ended_at|default:'－' }}</p>
+    <p>出発日時：{{ history.started_at|date:"Y/m/d H:i" }}</p>
+    <p>到着日時：{{ history.ended_at|date:"Y/m/d H:i"|default:"－" }}</p>
   </div>
 
+  <!-- 獲得称号 -->
   <h2 class="section-title">獲得称号</h2>
-  {% if history.titles %}
+  {% if titles %}
     <ul class="list-box">
-      {% for title in history.titles %}<li>🏆 {{ title }}</li>{% endfor %}
+      {% for t in titles %}<li>🏆 {{ t }}</li>{% endfor %}
     </ul>
   {% else %}
     <p class="muted">獲得した称号はありません</p>
   {% endif %}
 
+  <!-- 達成ミッション -->
   <h2 class="section-title">達成ミッション</h2>
-  {% if history.missions %}
+  {% if missions %}
     <ul class="list-box">
-      {% for mission in history.missions %}<li>✓ {{ mission }}</li>{% endfor %}
+      {% for m in missions %}<li>✓ {{ m }}</li>{% endfor %}
     </ul>
   {% else %}
     <p class="muted">達成したミッションはありません</p>
   {% endif %}
 
+  <!-- 保存写真 -->
   <h2 class="section-title">保存写真</h2>
-  {% if history.photo_url %}
+  {% if participation.saved_image_url %}
     <div class="photo-grid">
-      <img src="{{ history.photo_url }}" alt="保存写真" class="photo">
+      <img src="{{ participation.saved_image_url }}" alt="保存写真" class="photo">
     </div>
   {% else %}
     <p class="muted">保存された写真はありません</p>
-  {% endif %}
-
-  {% if error %}
-    <p class="error-message">{{ error }}</p>
-    <a href="" class="btn btn-secondary">再読み込み</a>
   {% endif %}
 {% endblock %}
